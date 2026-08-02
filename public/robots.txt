@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /practice
+Disallow: /results
+Disallow: /my-progress
+Disallow: /success
+
+Sitemap: https://pccmastery.com/sitemap.xml

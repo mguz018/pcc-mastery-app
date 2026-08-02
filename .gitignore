@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+.env.local
+.env.*.local
+.netlify
+.DS_Store
+*.log
+# Never commit these — they hold live keys
+serviceAccount*.json
