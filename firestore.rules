@@ -1,12 +1,16 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Users can read their own record, but only the Stripe webhook (via the
-    // Admin SDK, which bypasses these rules) may write it. This is what stops
-    // someone granting themselves premium from the browser console.
+    // Allow users to read their own profile to check isPremium.
     match /users/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;
+      // Webhook uses Admin SDK, so it bypasses these rules to write.
       allow write: if false;
+    }
+
+    // Default deny for everything else.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
