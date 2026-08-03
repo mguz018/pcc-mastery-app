@@ -12,7 +12,8 @@ import { trackLogin, trackSignUp } from './analytics';
 const MANUAL_ACCESS = [
   'drnancyauge@gmail.com',
   'huda.ayyub@gmail.com',
-  'mcsguzman1@gmail.com'
+  'mcsguzman1@gmail.com',
+  'aufdemarke@gmail.com'
 ];
 
 const AuthContext = createContext(null);
