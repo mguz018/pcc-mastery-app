@@ -7,14 +7,9 @@
   node_bundler = "esbuild"
   external_node_modules = ["firebase-admin"]
 
-# Stripe webhook needs the raw body — exclude it from the SPA catch-all.
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-  force = true
-
 # SPA fallback: real routes are handled by react-router client-side.
+# Netlify serves /.netlify/functions/* natively (ahead of this catch-all), so
+# functions — including the raw-body Stripe webhook — are not affected by it.
 [[redirects]]
   from = "/*"
   to = "/index.html"
