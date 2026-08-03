@@ -22,7 +22,7 @@ export default function About() {
           responds to practice.
         </p>
         <p>
-          All 215 questions here use that format, with explanations for both the best and
+          All 240 questions here use that format, with explanations for both the best and
           worst choices, because understanding why an appealing answer is wrong is where
           most of the learning happens.
         </p>
