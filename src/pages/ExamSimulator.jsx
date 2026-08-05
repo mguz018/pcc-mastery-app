@@ -1,0 +1,370 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import Seo from '../components/Seo';
+import Spinner from '../components/Spinner';
+import { useAuth } from '../lib/AuthContext';
+import { COMPETENCIES, loadQuestions, shuffle } from '../lib/questions';
+import { trackPaywallHit, trackPracticeComplete } from '../lib/analytics';
+
+const SECONDS_PER_Q = 90;
+const PRESETS = [
+  { n: 15, label: 'Quick check' },
+  { n: 30, label: 'Standard' },
+  { n: 60, label: 'Full simulation' }
+];
+const BEST_KEY = 'pcc_exam_best';
+
+const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+const verdictFor = (pct) => (pct >= 80 ? 'Exam ready' : pct >= 65 ? 'Nearly there' : 'Keep practicing');
+
+function readBest() {
+  try { return JSON.parse(localStorage.getItem(BEST_KEY)) || null; } catch { return null; }
+}
+
+export default function ExamSimulator() {
+  const { isPremium } = useAuth();
+  const [all, setAll] = useState(null);
+  const [phase, setPhase] = useState('config'); // config | running | done
+  const [length, setLength] = useState(30);
+
+  const [questions, setQuestions] = useState([]);
+  const [index, setIndex] = useState(0);
+  const [responses, setResponses] = useState([]); // [{best, worst} | null]
+  const [best, setBest] = useState(null);
+  const [worst, setWorst] = useState(null);
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [best_, setBest_] = useState(readBest());
+
+  const timer = useRef(null);
+
+  useEffect(() => { loadQuestions().then(setAll); }, []);
+
+  const premiumPool = useMemo(() => (all ? all : []), [all]);
+
+  const finish = useCallback((finalResponses, qs) => {
+    if (timer.current) clearInterval(timer.current);
+    const scored = qs.map((q, i) => {
+      const r = finalResponses[i];
+      const correct = !!r && r.best === q.best && r.worst === q.worst;
+      return { id: q.id, competency: q.competency, correct, answered: !!r };
+    });
+    const score = scored.filter((s) => s.correct).length;
+    const pct = Math.round((score / qs.length) * 100);
+    trackPracticeComplete(score, qs.length);
+
+    const prev = readBest();
+    if (!prev || pct > prev.pct) {
+      const rec = { pct, total: qs.length };
+      try { localStorage.setItem(BEST_KEY, JSON.stringify(rec)); } catch { /* ignore */ }
+      setBest_(rec);
+    }
+    setResponses(finalResponses);
+    setPhase('done');
+  }, []);
+
+  // Countdown timer.
+  useEffect(() => {
+    if (phase !== 'running') return;
+    timer.current = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          clearInterval(timer.current);
+          // Commit the in-progress selection before auto-submitting.
+          setResponses((prev) => {
+            const snapshot = [...prev];
+            snapshot[indexRef.current] = curRef.current;
+            finish(snapshot, questions);
+            return snapshot;
+          });
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer.current);
+  }, [phase, questions, finish]);
+
+  // Refs so the timer's stale closure can read the latest index/selection.
+  const indexRef = useRef(0);
+  const curRef = useRef(null);
+  useEffect(() => { indexRef.current = index; }, [index]);
+  useEffect(() => { curRef.current = best !== null && worst !== null ? { best, worst } : null; }, [best, worst]);
+
+  if (!all) return <Spinner label="Loading exam" />;
+
+  if (!isPremium) {
+    trackPaywallHit();
+    return (
+      <div className="max-w-xl mx-auto px-5 py-24 text-center">
+        <Seo title="Exam Simulator" description="Simulate the real timed ICF PCC exam experience." path="/exam" noindex />
+        <span className="text-4xl block mb-4" aria-hidden="true">⏱️</span>
+        <h1 className="font-display text-3xl font-bold mb-4">The Exam Simulator is premium</h1>
+        <p className="text-slate-600 dark:text-slate-400 mb-8">
+          Sit a full-length, timed mock exam that mirrors real test conditions — then get a
+          readiness score and a competency-by-competency breakdown. Unlock it with any plan.
+        </p>
+        <Link to="/pricing" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
+          See plans →
+        </Link>
+      </div>
+    );
+  }
+
+  // ---- CONFIG ----
+  if (phase === 'config') {
+    const start = () => {
+      const qs = shuffle(premiumPool).slice(0, length);
+      setQuestions(qs);
+      setResponses(new Array(qs.length).fill(null));
+      setIndex(0); setBest(null); setWorst(null);
+      setSecondsLeft(qs.length * SECONDS_PER_Q);
+      setPhase('running');
+    };
+    return (
+      <div className="max-w-2xl mx-auto px-5 py-16">
+        <Seo title="Exam Simulator" description="Simulate the real timed ICF PCC exam experience." path="/exam" noindex />
+        <p className="eyebrow text-xs font-bold uppercase text-orange-500 mb-4">Exam Simulator</p>
+        <h1 className="font-display text-4xl font-bold mb-4">Sit a timed mock exam</h1>
+        <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-8">
+          This mirrors real test conditions: a countdown clock, questions drawn from across all
+          eight competencies, and <span className="font-semibold">no feedback until you finish</span>.
+          You'll get a readiness score and a competency breakdown at the end.
+        </p>
+
+        {best_ && (
+          <div className="rounded-xl border border-slate-200 dark:border-white/10 p-4 mb-8 flex items-center gap-3">
+            <span className="text-xl" aria-hidden="true">🏆</span>
+            <span className="text-sm text-slate-600 dark:text-slate-300">
+              Personal best: <span className="font-bold accent-text">{best_.pct}%</span>
+            </span>
+          </div>
+        )}
+
+        <h2 className="font-bold mb-3">Choose your length</h2>
+        <div className="grid gap-3 sm:grid-cols-3 mb-8">
+          {PRESETS.map((p) => {
+            const active = length === p.n;
+            return (
+              <button
+                key={p.n}
+                onClick={() => setLength(p.n)}
+                aria-pressed={active}
+                className={`rounded-2xl border-2 p-5 text-center transition-all ${
+                  active ? 'border-orange-500 bg-orange-500/[0.06]' : 'border-slate-200 dark:border-white/10 hover:border-orange-500/40'
+                }`}
+              >
+                <p className="font-display text-3xl font-bold">{p.n}</p>
+                <p className="text-sm font-semibold mt-1">{p.label}</p>
+                <p className="text-xs text-slate-500 mt-1">≈ {Math.round((p.n * SECONDS_PER_Q) / 60)} min</p>
+              </button>
+            );
+          })}
+        </div>
+
+        <button onClick={start} className="btn-primary w-full text-white font-bold rounded-full text-lg">
+          Start {length}-question exam →
+        </button>
+        <Link to="/dashboard" className="block text-center text-sm text-slate-500 hover:text-orange-500 mt-5">
+          ← Back to dashboard
+        </Link>
+      </div>
+    );
+  }
+
+  // ---- RUNNING ----
+  if (phase === 'running') {
+    const q = questions[index];
+    const answered = responses.filter(Boolean).length;
+    const low = secondsLeft <= 60;
+
+    const pick = (i) => {
+      if (best === i) { setBest(null); return; }
+      if (worst === i) { setWorst(null); return; }
+      if (best === null) setBest(i);
+      else if (worst === null) setWorst(i);
+    };
+
+    const commitAndAdvance = () => {
+      const nextResponses = [...responses];
+      nextResponses[index] = { best, worst };
+      if (index + 1 >= questions.length) {
+        finish(nextResponses, questions);
+        return;
+      }
+      setResponses(nextResponses);
+      setIndex((i) => i + 1);
+      setBest(null); setWorst(null);
+    };
+
+    const endNow = () => {
+      const nextResponses = [...responses];
+      if (best !== null && worst !== null) nextResponses[index] = { best, worst };
+      finish(nextResponses, questions);
+    };
+
+    const optionClass = (i) => {
+      const base = 'w-full text-left p-4 rounded-xl border-2 transition-all min-h-[56px]';
+      if (i === best) return `${base} border-emerald-500 bg-emerald-500/10`;
+      if (i === worst) return `${base} border-rose-500 bg-rose-500/10`;
+      return `${base} border-slate-200 dark:border-white/10 hover:border-orange-500/50`;
+    };
+
+    return (
+      <div className="max-w-3xl mx-auto px-5 py-8">
+        <Seo title="Exam in progress" description="Timed PCC mock exam." path="/exam" noindex />
+
+        <div className="flex items-center justify-between mb-3 text-sm">
+          <span className="text-slate-500">Question {index + 1} of {questions.length}</span>
+          <span
+            className={`font-mono font-bold tabular-nums px-3 py-1 rounded-full ${
+              low ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 animate-pulse' : 'bg-slate-200/70 dark:bg-white/10'
+            }`}
+            role="timer"
+            aria-live="off"
+          >
+            ⏱ {fmt(secondsLeft)}
+          </span>
+        </div>
+
+        <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/10 mb-8 overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-orange-500 to-rose-500 transition-all duration-500"
+            style={{ width: `${(index / questions.length) * 100}%` }}
+          />
+        </div>
+
+        <p className="eyebrow text-xs font-bold uppercase text-orange-500 mb-4">{COMPETENCIES[q.competency]}</p>
+
+        <div className="fade-in" key={q.id}>
+          <p className="text-lg leading-relaxed mb-6">{q.scenario}</p>
+          <p className="font-bold mb-5">{q.question}</p>
+
+          <div className="space-y-3">
+            {q.options.map((opt, i) => (
+              <button key={i} onClick={() => pick(i)} className={optionClass(i)}>
+                <span className="flex gap-3">
+                  <span className="font-bold text-orange-500 shrink-0">{'ABCD'[i]}</span>
+                  <span>{opt}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+
+          <p className="text-sm text-slate-500 mt-5">
+            {best === null ? 'Tap your BEST choice first.' : worst === null ? 'Now tap your WORST choice.' : 'Locked in — no feedback until you finish.'}
+          </p>
+
+          <button
+            onClick={commitAndAdvance}
+            disabled={best === null || worst === null}
+            className="btn-primary w-full mt-4 text-white font-bold rounded-full disabled:opacity-40"
+          >
+            {index + 1 >= questions.length ? 'Finish exam →' : 'Next question →'}
+          </button>
+
+          <div className="flex justify-between items-center mt-5 text-sm">
+            <span className="text-slate-500">{answered} answered</span>
+            <button onClick={endNow} className="text-slate-500 hover:text-rose-500">End &amp; score now</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- DONE ----
+  const scored = questions.map((q, i) => {
+    const r = responses[i];
+    return { q, r, correct: !!r && r.best === q.best && r.worst === q.worst, answered: !!r };
+  });
+  const score = scored.filter((s) => s.correct).length;
+  const pct = Math.round((score / questions.length) * 100);
+  const byComp = scored.reduce((acc, s) => {
+    const c = s.q.competency;
+    acc[c] = acc[c] || { right: 0, total: 0 };
+    acc[c].total += 1;
+    if (s.correct) acc[c].right += 1;
+    return acc;
+  }, {});
+  const weakest = Object.entries(byComp).sort((a, b) => a[1].right / a[1].total - b[1].right / b[1].total)[0];
+
+  const restart = () => {
+    setPhase('config'); setQuestions([]); setResponses([]); setIndex(0); setBest(null); setWorst(null);
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto px-5 py-16">
+      <Seo title="Exam results" description="Your PCC mock exam results." path="/exam" noindex />
+
+      <div className="text-center mb-12">
+        <p className="eyebrow text-xs font-bold uppercase text-orange-500 mb-4">Exam complete</p>
+        <p className="font-display text-7xl font-bold accent-text mb-2">{pct}%</p>
+        <p className="text-slate-600 dark:text-slate-400">
+          {score} of {questions.length} correct — {verdictFor(pct)}
+        </p>
+        {best_ && best_.pct === pct && (
+          <p className="text-sm accent-text font-semibold mt-2">🏆 New personal best!</p>
+        )}
+      </div>
+
+      <h2 className="font-bold mb-4">By competency</h2>
+      <ul className="space-y-3 mb-8">
+        {Object.entries(byComp).map(([id, s]) => (
+          <li key={id} className="rounded-xl border border-slate-200 dark:border-white/10 p-4">
+            <div className="flex justify-between items-center gap-4 mb-2">
+              <span className="text-sm font-semibold">{COMPETENCIES[id]}</span>
+              <span className="text-sm text-slate-500 shrink-0">{s.right}/{s.total}</span>
+            </div>
+            <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-orange-500 to-rose-500" style={{ width: `${(s.right / s.total) * 100}%` }} />
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {weakest && (
+        <div className="rounded-2xl border border-orange-500/30 bg-orange-500/[0.06] p-6 mb-10">
+          <p className="font-bold mb-1">Focus area</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Your lowest competency was <span className="font-semibold">{COMPETENCIES[weakest[0]]}</span>. Targeted
+            practice there is the fastest way to lift your score.
+          </p>
+        </div>
+      )}
+
+      <details className="mb-10 rounded-xl border border-slate-200 dark:border-white/10 p-5">
+        <summary className="font-bold cursor-pointer">Review all answers</summary>
+        <ul className="mt-5 space-y-6">
+          {scored.map(({ q, r, correct, answered }, n) => (
+            <li key={q.id} className="border-t border-slate-200 dark:border-white/10 pt-5 first:border-0 first:pt-0">
+              <div className="flex items-start gap-2 mb-2">
+                <span className={`shrink-0 font-bold ${correct ? 'text-emerald-500' : 'text-rose-500'}`}>
+                  {correct ? '✓' : '✗'}
+                </span>
+                <p className="text-sm font-semibold">{n + 1}. {q.scenario}</p>
+              </div>
+              <div className="text-sm space-y-1 pl-6">
+                <p><span className="text-emerald-600 dark:text-emerald-400 font-semibold">BEST:</span> {q.options[q.best]}</p>
+                <p><span className="text-rose-600 dark:text-rose-400 font-semibold">WORST:</span> {q.options[q.worst]}</p>
+                <p className="text-slate-500">
+                  {answered
+                    ? `You chose BEST: ${q.options[r.best]} · WORST: ${q.options[r.worst]}`
+                    : 'Not answered (ran out of time).'}
+                </p>
+                {q.explanation?.best && <p className="text-slate-600 dark:text-slate-400 mt-1">{q.explanation.best}</p>}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </details>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button onClick={restart} className="btn-primary flex-1 text-white font-bold rounded-full">
+          Take another exam
+        </button>
+        <Link to="/dashboard" className="flex-1 border border-slate-300 dark:border-white/15 rounded-full font-bold py-3.5 text-center hover:border-orange-500 transition-colors">
+          Back to dashboard
+        </Link>
+      </div>
+    </div>
+  );
+}

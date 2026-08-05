@@ -42,6 +42,16 @@ export default function Dashboard() {
             Ten questions drawn from every competency — closest to the real exam.
           </p>
         </Link>
+        <Link to="/exam" className="lift rounded-2xl border border-slate-200 dark:border-white/10 p-7">
+          <span className="text-3xl block mb-3" aria-hidden="true">⏱️</span>
+          <p className="font-bold text-lg mb-1">
+            Exam Simulator
+            {!isPremium && <span className="ml-2 align-middle text-[10px] font-bold uppercase tracking-wide text-orange-500 border border-orange-500/40 rounded-full px-2 py-0.5">Premium</span>}
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            A full-length, timed mock exam with a readiness score — closest to the real thing.
+          </p>
+        </Link>
         <Link to="/prep-guide" className="lift rounded-2xl border border-slate-200 dark:border-white/10 p-7">
           <span className="text-3xl block mb-3" aria-hidden="true">📘</span>
           <p className="font-bold text-lg mb-1">Prep guide</p>
