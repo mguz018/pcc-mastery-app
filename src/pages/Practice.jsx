@@ -55,10 +55,10 @@ export default function Practice() {
     trackPaywallHit();
     return (
       <div className="max-w-xl mx-auto px-5 py-24 text-center">
-        <Seo title="Unlock full access" description="Unlock all 240 PCC practice questions." path="/practice" noindex />
+        <Seo title="Unlock full access" description="Unlock all 280 PCC practice questions." path="/practice" noindex />
         <h1 className="font-display text-3xl font-bold mb-4">You've used the free questions</h1>
         <p className="text-slate-600 dark:text-slate-400 mb-8">
-          Unlock all 240 questions across every competency.
+          Unlock all 280 questions across every competency.
         </p>
         <Link to="/pricing" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
           See plans →
