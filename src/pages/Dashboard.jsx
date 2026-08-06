@@ -47,7 +47,7 @@ export default function Dashboard() {
         <div className="rounded-2xl border border-orange-500/30 bg-orange-500/[0.06] p-6 my-8 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
           <div>
             <p className="font-bold mb-1">You're on the free tier</p>
-            <p className="text-sm text-slate-600 dark:text-slate-400">10 of 370 questions available.</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">10 of 390 questions available.</p>
           </div>
           <Link to="/pricing" className="btn-primary text-white font-bold rounded-full text-sm flex items-center justify-center shrink-0">
             Unlock everything →
