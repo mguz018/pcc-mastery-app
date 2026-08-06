@@ -54,7 +54,7 @@ export default function Success() {
       {(state === 'ready' || isPremium) && (
         <>
           <p className="text-slate-600 dark:text-slate-400 mb-8">
-            All 330 questions are unlocked. Good luck with your exam.
+            All 350 questions are unlocked. Good luck with your exam.
           </p>
           <Link to="/practice" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
             Start practicing →
