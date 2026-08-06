@@ -4,6 +4,7 @@ import Seo from '../components/Seo';
 import Spinner from '../components/Spinner';
 import { useAuth } from '../lib/AuthContext';
 import { COMPETENCIES, loadQuestions, shuffle } from '../lib/questions';
+import { recordSession } from '../lib/progress';
 import { trackPaywallHit, trackPracticeComplete } from '../lib/analytics';
 
 const SECONDS_PER_Q = 90;
@@ -50,6 +51,7 @@ export default function ExamSimulator() {
     });
     const score = scored.filter((s) => s.correct).length;
     const pct = Math.round((score / qs.length) * 100);
+    recordSession(scored);
     trackPracticeComplete(score, qs.length);
 
     const prev = readBest();

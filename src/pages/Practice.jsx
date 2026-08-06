@@ -4,6 +4,7 @@ import Seo from '../components/Seo';
 import Spinner from '../components/Spinner';
 import { useAuth } from '../lib/AuthContext';
 import { COMPETENCIES, COMPETENCY_SLUGS, loadQuestions, shuffle } from '../lib/questions';
+import { recordSession } from '../lib/progress';
 import { trackPaywallHit, trackPracticeComplete, trackQuestionAnswered } from '../lib/analytics';
 
 const SESSION_LENGTH = 10;
@@ -89,6 +90,7 @@ export default function Practice() {
     const done = [...answers];
     if (index + 1 >= questions.length) {
       const score = done.filter((a) => a.correct).length;
+      recordSession(done);
       trackPracticeComplete(score, done.length);
       navigate('/results', { state: { answers: done, competency: competencyId } });
       return;
