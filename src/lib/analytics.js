@@ -35,6 +35,22 @@ export const trackBeginCheckout = (plan, value) =>
 export const trackPurchase = (sessionId, value, plan) =>
   send('purchase', { transaction_id: sessionId, currency: 'USD', value, items: [{ item_name: plan }] });
 
+// Fires the specific Google Ads "Purchase" conversion action so PerfMax can
+// optimize toward sales (and their real dollar value). send_to is the account's
+// conversion ID + label; transaction_id lets Google de-duplicate repeat loads.
+const ADS_PURCHASE = 'AW-17793251865/E10uCJHChM8bEJn0vaRC';
+export const trackAdsPurchase = (value, transactionId) => {
+  if (import.meta.env.DEV) { console.debug('[analytics] ads conversion', value); return; }
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'conversion', {
+      send_to: ADS_PURCHASE,
+      value,
+      currency: 'USD',
+      transaction_id: transactionId || ''
+    });
+  }
+};
+
 // Engagement: tells you whether free questions actually convert.
 export const trackQuestionAnswered = (id, correct) =>
   send('question_answered', { question_id: id, correct });

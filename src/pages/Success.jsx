@@ -2,7 +2,14 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Seo from '../components/Seo';
 import { useAuth } from '../lib/AuthContext';
-import { trackPurchase } from '../lib/analytics';
+import { trackAdsPurchase, trackPurchase } from '../lib/analytics';
+
+// Keep in sync with PLANS in Pricing.jsx (mapped by access length in days).
+const PLAN_BY_DAYS = {
+  1: { value: 10.99, label: '24-Hour Access' },
+  2: { value: 16.99, label: '48-Hour Access' },
+  7: { value: 29.99, label: '1-Week Access' }
+};
 
 // Stripe redirects here. The webhook writes access to Firestore asynchronously,
 // so poll until it lands rather than showing a false "no access" state.
@@ -26,7 +33,9 @@ export default function Success() {
         setState('ready');
         if (sessionId) {
           const days = data.lastPurchase && data.lastPurchase.days;
-          trackPurchase(sessionId, days === 7 ? 9.99 : 24.99, days === 7 ? '7-Day Access' : '1-Month Access');
+          const plan = PLAN_BY_DAYS[days] || { value: 10.99, label: 'PCC Mastery access' };
+          trackPurchase(sessionId, plan.value, plan.label);
+          trackAdsPurchase(plan.value, sessionId);
         }
         return;
       }
