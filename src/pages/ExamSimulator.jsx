@@ -15,6 +15,33 @@ const PRESETS = [
 ];
 const BEST_KEY = 'pcc_exam_best';
 
+// Real ICF exam content weighting.
+const DOMAIN_LABEL = {
+  ethics: 'Coaching Ethics',
+  boundaries: 'Definition & Boundaries',
+  competency: 'Competencies & Techniques'
+};
+const DOMAIN_ORDER = ['ethics', 'boundaries', 'competency'];
+
+// Sample n questions to mirror the exam blueprint: 30% ethics, 30% boundaries,
+// 40% competencies — falling back to fill any shortfall from the rest of the pool.
+function blueprintSample(pool, n) {
+  const buckets = { ethics: [], boundaries: [], competency: [] };
+  pool.forEach((q) => { (buckets[q.domain] || buckets.competency).push(q); });
+  const want = { ethics: Math.round(n * 0.3), boundaries: Math.round(n * 0.3) };
+  want.competency = n - want.ethics - want.boundaries;
+  const picked = [];
+  const leftover = [];
+  DOMAIN_ORDER.forEach((d) => {
+    const s = shuffle(buckets[d]);
+    const take = Math.min(want[d], s.length);
+    picked.push(...s.slice(0, take));
+    leftover.push(...s.slice(take));
+  });
+  if (picked.length < n) picked.push(...shuffle(leftover).slice(0, n - picked.length));
+  return shuffle(picked).slice(0, n);
+}
+
 const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 const verdictFor = (pct) => (pct >= 80 ? 'Exam ready' : pct >= 65 ? 'Nearly there' : 'Keep practicing');
 
@@ -27,6 +54,7 @@ export default function ExamSimulator() {
   const [all, setAll] = useState(null);
   const [phase, setPhase] = useState('config'); // config | running | done
   const [length, setLength] = useState(30);
+  const [mode, setMode] = useState('blueprint'); // blueprint | even
 
   const [questions, setQuestions] = useState([]);
   const [index, setIndex] = useState(0);
@@ -115,7 +143,9 @@ export default function ExamSimulator() {
   // ---- CONFIG ----
   if (phase === 'config') {
     const start = () => {
-      const qs = shuffle(premiumPool).slice(0, length);
+      const qs = mode === 'blueprint'
+        ? blueprintSample(premiumPool, length)
+        : shuffle(premiumPool).slice(0, length);
       setQuestions(qs);
       setResponses(new Array(qs.length).fill(null));
       setIndex(0); setBest(null); setWorst(null);
@@ -128,9 +158,9 @@ export default function ExamSimulator() {
         <p className="eyebrow text-xs font-bold uppercase text-orange-500 mb-4">Exam Simulator</p>
         <h1 className="font-display text-4xl font-bold mb-4">Sit a timed mock exam</h1>
         <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-8">
-          This mirrors real test conditions: a countdown clock, questions drawn from across all
-          eight competencies, and <span className="font-semibold">no feedback until you finish</span>.
-          You'll get a readiness score and a competency breakdown at the end.
+          This mirrors real test conditions: a countdown clock, questions weighted to match the real
+          exam blueprint, and <span className="font-semibold">no feedback until you finish</span>.
+          You'll get a readiness score plus content-area and competency breakdowns at the end.
         </p>
 
         {best_ && (
@@ -158,6 +188,32 @@ export default function ExamSimulator() {
                 <p className="font-display text-3xl font-bold">{p.n}</p>
                 <p className="text-sm font-semibold mt-1">{p.label}</p>
                 <p className="text-xs text-slate-500 mt-1">≈ {Math.round((p.n * SECONDS_PER_Q) / 60)} min</p>
+              </button>
+            );
+          })}
+        </div>
+
+        <h2 className="font-bold mb-3">Choose your mix</h2>
+        <div className="grid gap-3 sm:grid-cols-2 mb-8">
+          {[
+            { key: 'blueprint', label: 'Real exam blueprint', desc: '30% ethics · 30% definition & boundaries · 40% competencies — mirrors how the ICF exam is weighted.' },
+            { key: 'even', label: 'Even mix', desc: 'Questions drawn evenly from across the eight core competencies.' }
+          ].map((m) => {
+            const active = mode === m.key;
+            return (
+              <button
+                key={m.key}
+                onClick={() => setMode(m.key)}
+                aria-pressed={active}
+                className={`rounded-2xl border-2 p-5 text-left transition-all ${
+                  active ? 'border-orange-500 bg-orange-500/[0.06]' : 'border-slate-200 dark:border-white/10 hover:border-orange-500/40'
+                }`}
+              >
+                <p className="font-bold mb-1">
+                  {m.label}
+                  {m.key === 'blueprint' && <span className="ml-2 align-middle text-[10px] font-bold uppercase text-orange-500">Recommended</span>}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{m.desc}</p>
               </button>
             );
           })}
@@ -287,6 +343,13 @@ export default function ExamSimulator() {
     if (s.correct) acc[c].right += 1;
     return acc;
   }, {});
+  const byDomain = scored.reduce((acc, s) => {
+    const d = s.q.domain || 'competency';
+    acc[d] = acc[d] || { right: 0, total: 0 };
+    acc[d].total += 1;
+    if (s.correct) acc[d].right += 1;
+    return acc;
+  }, {});
   const weakest = Object.entries(byComp).sort((a, b) => a[1].right / a[1].total - b[1].right / b[1].total)[0];
 
   const restart = () => {
@@ -303,10 +366,30 @@ export default function ExamSimulator() {
         <p className="text-slate-600 dark:text-slate-400">
           {score} of {questions.length} correct — {verdictFor(pct)}
         </p>
+        <p className="text-xs text-slate-400 mt-2">On the real ICF exam, passing is roughly 76%.</p>
         {best_ && best_.pct === pct && (
           <p className="text-sm accent-text font-semibold mt-2">🏆 New personal best!</p>
         )}
       </div>
+
+      <h2 className="font-bold mb-4">By content area</h2>
+      <ul className="space-y-3 mb-8">
+        {DOMAIN_ORDER.filter((d) => byDomain[d]).map((d) => {
+          const s = byDomain[d];
+          const pct2 = Math.round((100 * s.right) / s.total);
+          return (
+            <li key={d} className="rounded-xl border border-slate-200 dark:border-white/10 p-4">
+              <div className="flex justify-between items-center gap-4 mb-2">
+                <span className="text-sm font-semibold">{DOMAIN_LABEL[d]}</span>
+                <span className="text-sm text-slate-500 shrink-0">{s.right}/{s.total} · {pct2}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-orange-500 to-rose-500" style={{ width: `${pct2}%` }} />
+              </div>
+            </li>
+          );
+        })}
+      </ul>
 
       <h2 className="font-bold mb-4">By competency</h2>
       <ul className="space-y-3 mb-8">
