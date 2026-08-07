@@ -77,7 +77,7 @@ export default function Success() {
           <p className="text-slate-600 dark:text-slate-300">
             Your payment went through. Refresh this page in a moment — if access still
             doesn't appear, email{' '}
-            <a href="mailto:mcsguzman1@gmail.com" className="text-orange-500 font-semibold hover:underline">mcsguzman1@gmail.com</a>{' '}
+            <a href="mailto:support@pccmastery.com" className="text-orange-500 font-semibold hover:underline">support@pccmastery.com</a>{' '}
             with your receipt and we'll sort it immediately.
           </p>
         </div>

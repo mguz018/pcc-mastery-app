@@ -75,12 +75,12 @@ function Footer() {
           <Link to="/pricing" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">Pricing</Link>
           <Link to="/prep-guide" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">Prep Guide</Link>
           <Link to="/about" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">About & Mentoring</Link>
-          <a href="mailto:mcsguzman1@gmail.com" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">Support</a>
+          <a href="mailto:support@pccmastery.com" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">Support</a>
         </nav>
         <div className="text-slate-500 dark:text-slate-400">
           <p>
             Need help? Email{' '}
-            <a href="mailto:mcsguzman1@gmail.com" className="text-orange-500 hover:underline">mcsguzman1@gmail.com</a>
+            <a href="mailto:support@pccmastery.com" className="text-orange-500 hover:underline">support@pccmastery.com</a>
           </p>
           <p className="mt-3">Not affiliated with or endorsed by the International Coaching Federation.</p>
           <p className="mt-3">© {new Date().getFullYear()} PCC Mastery</p>
