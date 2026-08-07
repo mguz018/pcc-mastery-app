@@ -76,7 +76,9 @@ export default function Success() {
           <p className="font-bold mb-1">Your access is still activating</p>
           <p className="text-slate-600 dark:text-slate-300">
             Your payment went through. Refresh this page in a moment — if access still
-            doesn't appear, email support with your receipt and we'll sort it immediately.
+            doesn't appear, email{' '}
+            <a href="mailto:mcsguzman1@gmail.com" className="text-orange-500 font-semibold hover:underline">mcsguzman1@gmail.com</a>{' '}
+            with your receipt and we'll sort it immediately.
           </p>
         </div>
       )}
