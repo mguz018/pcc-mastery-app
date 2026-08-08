@@ -82,7 +82,7 @@ export default function ExamSimulator() {
     const scored = qs.map((q, i) => {
       const r = finalResponses[i];
       const correct = !!r && r.best === q.best && r.worst === q.worst;
-      return { id: q.id, competency: q.competency, correct, answered: !!r };
+      return { id: q.id, competency: q.competency, domain: q.domain, correct, answered: !!r };
     });
     const score = scored.filter((s) => s.correct).length;
     const pct = Math.round((score / qs.length) * 100);

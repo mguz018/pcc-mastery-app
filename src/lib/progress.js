@@ -7,6 +7,7 @@ const empty = () => ({
   answered: 0,
   correct: 0,
   byComp: {}, // { [competencyId]: { answered, correct } }
+  byDomain: {}, // { [domain]: { answered, correct } } — for blueprint-weighted readiness
   missed: {}, // { [questionId]: true } — questions to re-drill, cleared once answered right
   sessions: 0,
   streak: { current: 0, longest: 0, lastDay: null },
@@ -41,11 +42,12 @@ function bumpStreak(streak) {
   return { current, longest: Math.max(s.longest || 0, current), lastDay: today };
 }
 
-// answers: array of { id, competency, correct, answered? }
+// answers: array of { id, competency, domain?, correct, answered? }
 export function recordSession(answers) {
   if (!answers || !answers.length) return read();
   const p = read();
   if (!p.missed) p.missed = {};
+  if (!p.byDomain) p.byDomain = {};
   for (const a of answers) {
     p.answered += 1;
     if (a.correct) p.correct += 1;
@@ -53,6 +55,14 @@ export function recordSession(answers) {
     c.answered += 1;
     if (a.correct) c.correct += 1;
     p.byComp[a.competency] = c;
+
+    // Domain-level tally (ethics / boundaries / competency) for the readiness score.
+    if (a.domain) {
+      const d = p.byDomain[a.domain] || { answered: 0, correct: 0 };
+      d.answered += 1;
+      if (a.correct) d.correct += 1;
+      p.byDomain[a.domain] = d;
+    }
 
     // Track the re-drill queue: add missed questions, clear ones now answered
     // right. Skip questions left unanswered (e.g. exam ran out of time).

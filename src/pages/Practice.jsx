@@ -112,7 +112,7 @@ export default function Practice({ review = false }) {
     if (best === null || worst === null) return;
     const correct = best === q.best && worst === q.worst;
     trackQuestionAnswered(q.id, correct);
-    setAnswers((a) => [...a, { id: q.id, competency: q.competency, correct }]);
+    setAnswers((a) => [...a, { id: q.id, competency: q.competency, domain: q.domain, correct }]);
     setSubmitted(true);
   };
 

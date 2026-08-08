@@ -4,6 +4,7 @@ import Seo from '../components/Seo';
 import { useAuth } from '../lib/AuthContext';
 import { COMPETENCIES, slugFor } from '../lib/questions';
 import { accuracy, getProgress, resetProgress } from '../lib/progress';
+import ReadinessCard from '../components/ReadinessCard';
 
 const missedCountOf = (prog) => Object.keys(prog.missed || {}).length;
 
@@ -57,6 +58,9 @@ export default function Dashboard() {
           </Link>
         </div>
       )}
+
+      {/* Readiness score — the headline "are you ready?" number */}
+      {prog.answered > 0 && <ReadinessCard progress={prog} isPremium={isPremium} />}
 
       {/* Progress */}
       {prog.answered > 0 ? (
