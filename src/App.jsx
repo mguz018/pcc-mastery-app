@@ -37,6 +37,7 @@ export default function App() {
             {/* Free tier practices here too — the paywall is on content, not the route */}
             <Route path="practice" element={<Practice />} />
             <Route path="practice/:competency" element={<Practice />} />
+            <Route path="review" element={<Practice review />} />
             <Route path="exam" element={<ExamSimulator />} />
             <Route path="results" element={<Results />} />
 

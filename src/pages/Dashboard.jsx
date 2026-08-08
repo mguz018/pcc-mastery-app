@@ -5,9 +5,12 @@ import { useAuth } from '../lib/AuthContext';
 import { COMPETENCIES, slugFor } from '../lib/questions';
 import { accuracy, getProgress, resetProgress } from '../lib/progress';
 
+const missedCountOf = (prog) => Object.keys(prog.missed || {}).length;
+
 export default function Dashboard() {
   const { user, premium, isPremium } = useAuth();
   const [prog, setProg] = useState(() => getProgress());
+  const missed = missedCountOf(prog);
 
   const daysLeft = isPremium && premium.expiryDate
     ? Math.max(0, Math.ceil((premium.expiryDate - Date.now()) / 86400000))
@@ -108,14 +111,24 @@ export default function Dashboard() {
             })}
           </ul>
 
-          {weakest !== null && (
-            <Link
-              to={`/practice/${slugFor(weakest)}`}
-              className="btn-primary inline-flex items-center text-white font-bold rounded-full text-sm"
-            >
-              Drill your weakest: {COMPETENCIES[weakest]} →
-            </Link>
-          )}
+          <div className="flex flex-wrap gap-3">
+            {weakest !== null && (
+              <Link
+                to={`/practice/${slugFor(weakest)}`}
+                className="btn-primary inline-flex items-center text-white font-bold rounded-full text-sm"
+              >
+                Drill your weakest: {COMPETENCIES[weakest]} →
+              </Link>
+            )}
+            {missed > 0 && (
+              <Link
+                to="/review"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-orange-500 text-orange-600 dark:text-orange-400 font-bold text-sm px-5 py-3 hover:bg-orange-500/[0.06] transition-colors"
+              >
+                🎯 Review {missed} missed {missed === 1 ? 'question' : 'questions'} →
+              </Link>
+            )}
+          </div>
           <button onClick={reset} className="block mt-5 text-xs text-slate-400 hover:text-rose-500">
             Reset progress
           </button>
@@ -140,10 +153,12 @@ export default function Dashboard() {
           <span className="text-3xl block mb-3" aria-hidden="true">⏱️</span>
           <p className="font-bold text-lg mb-1">
             Exam Simulator
-            {!isPremium && <span className="ml-2 align-middle text-[10px] font-bold uppercase tracking-wide text-orange-500 border border-orange-500/40 rounded-full px-2 py-0.5">Premium</span>}
+            {!isPremium && <span className="ml-2 align-middle text-[10px] font-bold uppercase tracking-wide text-orange-500 border border-orange-500/40 rounded-full px-2 py-0.5">Free preview</span>}
           </p>
           <p className="text-sm text-slate-600 dark:text-slate-400">
-            A full-length, timed mock exam with a readiness score — closest to the real thing.
+            {isPremium
+              ? 'A full-length, timed mock exam with a readiness score — closest to the real thing.'
+              : 'Try a free timed preview — then unlock full-length mock exams with a readiness score.'}
           </p>
         </Link>
         <Link to="/prep-guide" className="lift rounded-2xl border border-slate-200 dark:border-white/10 p-7">

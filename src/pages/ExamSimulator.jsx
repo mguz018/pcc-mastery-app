@@ -13,6 +13,7 @@ const PRESETS = [
   { n: 30, label: 'Standard' },
   { n: 60, label: 'Full simulation' }
 ];
+const FREE_PREVIEW_N = 5; // free users get a short taster of the timed experience
 const BEST_KEY = 'pcc_exam_best';
 
 // Real ICF exam content weighting.
@@ -65,10 +66,16 @@ export default function ExamSimulator() {
   const [best_, setBest_] = useState(readBest());
 
   const timer = useRef(null);
+  const isPreview = !isPremium;
 
   useEffect(() => { loadQuestions().then(setAll); }, []);
 
-  const premiumPool = useMemo(() => (all ? all : []), [all]);
+  // Free users preview the timed experience on the free question pool; premium
+  // users get the full bank.
+  const pool = useMemo(() => {
+    if (!all) return [];
+    return isPremium ? all : all.filter((q) => !q.isPremium);
+  }, [all, isPremium]);
 
   const finish = useCallback((finalResponses, qs) => {
     if (timer.current) clearInterval(timer.current);
@@ -82,15 +89,18 @@ export default function ExamSimulator() {
     recordSession(scored);
     trackPracticeComplete(score, qs.length);
 
-    const prev = readBest();
-    if (!prev || pct > prev.pct) {
-      const rec = { pct, total: qs.length };
-      try { localStorage.setItem(BEST_KEY, JSON.stringify(rec)); } catch { /* ignore */ }
-      setBest_(rec);
+    // Only full-length premium exams count toward the personal best.
+    if (isPremium) {
+      const prev = readBest();
+      if (!prev || pct > prev.pct) {
+        const rec = { pct, total: qs.length };
+        try { localStorage.setItem(BEST_KEY, JSON.stringify(rec)); } catch { /* ignore */ }
+        setBest_(rec);
+      }
     }
     setResponses(finalResponses);
     setPhase('done');
-  }, []);
+  }, [isPremium]);
 
   // Countdown timer.
   useEffect(() => {
@@ -122,35 +132,47 @@ export default function ExamSimulator() {
 
   if (!all) return <Spinner label="Loading exam" />;
 
-  if (!isPremium) {
-    trackPaywallHit();
-    return (
-      <div className="max-w-xl mx-auto px-5 py-24 text-center">
-        <Seo title="Exam Simulator" description="Simulate the real timed ICF PCC exam experience." path="/exam" noindex />
-        <span className="text-4xl block mb-4" aria-hidden="true">⏱️</span>
-        <h1 className="font-display text-3xl font-bold mb-4">The Exam Simulator is premium</h1>
-        <p className="text-slate-600 dark:text-slate-400 mb-8">
-          Sit a full-length, timed mock exam that mirrors real test conditions — then get a
-          readiness score and a competency-by-competency breakdown. Unlock it with any plan.
-        </p>
-        <Link to="/pricing" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
-          See plans →
-        </Link>
-      </div>
-    );
-  }
-
   // ---- CONFIG ----
   if (phase === 'config') {
-    const start = () => {
-      const qs = mode === 'blueprint'
-        ? blueprintSample(premiumPool, length)
-        : shuffle(premiumPool).slice(0, length);
+    const startExam = (qs) => {
       setQuestions(qs);
       setResponses(new Array(qs.length).fill(null));
       setIndex(0); setBest(null); setWorst(null);
       setSecondsLeft(qs.length * SECONDS_PER_Q);
       setPhase('running');
+    };
+
+    // Free users: a short, timed preview drawn from the free question pool.
+    if (isPreview) {
+      trackPaywallHit();
+      const startPreview = () =>
+        startExam(shuffle(pool).slice(0, Math.min(FREE_PREVIEW_N, pool.length)));
+      return (
+        <div className="max-w-2xl mx-auto px-5 py-16">
+          <Seo title="Exam Simulator" description="Try a timed ICF PCC mock-exam preview free." path="/exam" noindex />
+          <p className="eyebrow text-xs font-bold uppercase text-orange-500 mb-4">Free preview</p>
+          <h1 className="font-display text-4xl font-bold mb-4">Try the timed exam experience</h1>
+          <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-8">
+            Get a feel for real test conditions: a countdown clock and{' '}
+            <span className="font-semibold">no feedback until you finish</span>. This free preview is{' '}
+            {FREE_PREVIEW_N} questions. Unlocking any plan opens full-length exams up to 60 questions,
+            the real blueprint mix, and your readiness score.
+          </p>
+          <button onClick={startPreview} className="btn-primary w-full text-white font-bold rounded-full text-lg">
+            Start {FREE_PREVIEW_N}-question preview →
+          </button>
+          <Link to="/pricing" className="block text-center text-sm text-orange-600 dark:text-orange-400 font-semibold mt-5 hover:underline">
+            Or see plans — full exams from $10.99 →
+          </Link>
+        </div>
+      );
+    }
+
+    const start = () => {
+      const qs = mode === 'blueprint'
+        ? blueprintSample(pool, length)
+        : shuffle(pool).slice(0, length);
+      startExam(qs);
     };
     return (
       <div className="max-w-2xl mx-auto px-5 py-16">
@@ -371,6 +393,19 @@ export default function ExamSimulator() {
           <p className="text-sm accent-text font-semibold mt-2">🏆 New personal best!</p>
         )}
       </div>
+
+      {isPreview && (
+        <div className="rounded-2xl border-2 border-orange-500 bg-orange-500/[0.06] p-6 mb-10 text-center">
+          <p className="font-bold text-lg mb-2">That was a {questions.length}-question preview</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300 mb-5">
+            Unlock full-length timed exams (up to 60 questions), the real exam blueprint mix, and a
+            saved readiness score — plus all 430 practice questions across every competency.
+          </p>
+          <Link to="/pricing" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
+            See plans — from $10.99 →
+          </Link>
+        </div>
+      )}
 
       <h2 className="font-bold mb-4">By content area</h2>
       <ul className="space-y-3 mb-8">

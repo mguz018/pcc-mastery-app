@@ -7,6 +7,7 @@ const empty = () => ({
   answered: 0,
   correct: 0,
   byComp: {}, // { [competencyId]: { answered, correct } }
+  missed: {}, // { [questionId]: true } — questions to re-drill, cleared once answered right
   sessions: 0,
   streak: { current: 0, longest: 0, lastDay: null },
   updatedAt: null
@@ -40,10 +41,11 @@ function bumpStreak(streak) {
   return { current, longest: Math.max(s.longest || 0, current), lastDay: today };
 }
 
-// answers: array of { competency, correct }
+// answers: array of { id, competency, correct, answered? }
 export function recordSession(answers) {
   if (!answers || !answers.length) return read();
   const p = read();
+  if (!p.missed) p.missed = {};
   for (const a of answers) {
     p.answered += 1;
     if (a.correct) p.correct += 1;
@@ -51,6 +53,13 @@ export function recordSession(answers) {
     c.answered += 1;
     if (a.correct) c.correct += 1;
     p.byComp[a.competency] = c;
+
+    // Track the re-drill queue: add missed questions, clear ones now answered
+    // right. Skip questions left unanswered (e.g. exam ran out of time).
+    if (a.id != null && a.answered !== false) {
+      if (a.correct) delete p.missed[a.id];
+      else p.missed[a.id] = true;
+    }
   }
   p.sessions += 1;
   p.streak = bumpStreak(p.streak);
@@ -69,6 +78,15 @@ export function hasProgress() {
 
 export function resetProgress() {
   try { localStorage.removeItem(KEY); } catch { /* ignore */ }
+}
+
+// Question ids the user has missed and not yet re-answered correctly.
+export function getMissedIds() {
+  return Object.keys(read().missed || {});
+}
+
+export function missedCount() {
+  return Object.keys(read().missed || {}).length;
 }
 
 export function accuracy(stats) {

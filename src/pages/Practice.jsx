@@ -4,12 +4,13 @@ import Seo from '../components/Seo';
 import Spinner from '../components/Spinner';
 import { useAuth } from '../lib/AuthContext';
 import { COMPETENCIES, COMPETENCY_SLUGS, loadQuestions, shuffle } from '../lib/questions';
-import { recordSession } from '../lib/progress';
+import { getMissedIds, recordSession } from '../lib/progress';
 import { trackPaywallHit, trackPracticeComplete, trackQuestionAnswered } from '../lib/analytics';
 
 const SESSION_LENGTH = 10;
+const REVIEW_LENGTH = 15;
 
-export default function Practice() {
+export default function Practice({ review = false }) {
   const { competency: slug } = useParams();
   const navigate = useNavigate();
   const { isPremium } = useAuth();
@@ -29,15 +30,20 @@ export default function Practice() {
   const questions = useMemo(() => {
     if (!all) return [];
     let pool = all;
-    if (competencyId) pool = pool.filter((q) => q.competency === competencyId);
+    if (review) {
+      const missed = new Set(getMissedIds().map(String));
+      pool = pool.filter((q) => missed.has(String(q.id)));
+    } else if (competencyId) {
+      pool = pool.filter((q) => q.competency === competencyId);
+    }
     if (!isPremium) pool = pool.filter((q) => !q.isPremium);
-    return shuffle(pool).slice(0, SESSION_LENGTH);
-  }, [all, competencyId, isPremium]);
+    return shuffle(pool).slice(0, review ? REVIEW_LENGTH : SESSION_LENGTH);
+  }, [all, competencyId, isPremium, review]);
 
   // Reset the session whenever the route changes.
   useEffect(() => {
     setIndex(0); setBest(null); setWorst(null); setSubmitted(false); setAnswers([]);
-  }, [slug, isPremium]);
+  }, [slug, isPremium, review]);
 
   if (invalidSlug) {
     return (
@@ -51,24 +57,48 @@ export default function Practice() {
 
   if (!all) return <Spinner label="Loading questions" />;
 
+  if (questions.length === 0 && review) {
+    return (
+      <div className="max-w-xl mx-auto px-5 py-24 text-center">
+        <Seo title="Review your mistakes" description="Re-drill the questions you've missed." path="/review" noindex />
+        <span className="text-5xl block mb-5" aria-hidden="true">✅</span>
+        <h1 className="font-display text-3xl font-bold mb-4">No mistakes to review</h1>
+        <p className="text-slate-600 dark:text-slate-400 mb-8">
+          You've correctly answered everything you've attempted so far. Keep practicing —
+          any questions you miss will show up here to re-drill.
+        </p>
+        <Link to="/practice" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
+          Keep practicing →
+        </Link>
+      </div>
+    );
+  }
+
   if (questions.length === 0) {
     trackPaywallHit();
     return (
       <div className="max-w-xl mx-auto px-5 py-24 text-center">
         <Seo title="Unlock full access" description="Unlock all 430 PCC practice questions." path="/practice" noindex />
-        <h1 className="font-display text-3xl font-bold mb-4">You've used the free questions</h1>
-        <p className="text-slate-600 dark:text-slate-400 mb-8">
-          Unlock all 430 questions across every competency.
+        <span className="text-5xl block mb-5" aria-hidden="true">🔓</span>
+        <h1 className="font-display text-3xl font-bold mb-4">You've used the 10 free questions</h1>
+        <p className="text-slate-600 dark:text-slate-400 mb-6">
+          Keep going with the full bank — <span className="font-semibold">430 real-format questions</span> across
+          all eight competencies, timed mock exams, and a readiness score.
         </p>
-        <Link to="/pricing" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
-          See plans →
+        <ul className="text-sm text-slate-600 dark:text-slate-300 mb-8 inline-flex flex-col gap-2 text-left">
+          <li className="flex gap-2"><span className="text-emerald-500">✓</span> One-time payment — no subscription</li>
+          <li className="flex gap-2"><span className="text-emerald-500">✓</span> Full-length timed Exam Simulator</li>
+          <li className="flex gap-2"><span className="text-emerald-500">✓</span> Drill your missed questions until they stick</li>
+        </ul>
+        <Link to="/pricing" className="btn-primary flex items-center justify-center text-white font-bold rounded-full">
+          See plans — from $10.99 →
         </Link>
       </div>
     );
   }
 
   const q = questions[index];
-  const title = competencyId ? COMPETENCIES[competencyId] : 'Mixed practice';
+  const title = review ? 'Review your mistakes' : competencyId ? COMPETENCIES[competencyId] : 'Mixed practice';
 
   const pick = (i) => {
     if (submitted) return;
