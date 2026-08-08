@@ -35,7 +35,8 @@ export default function Success() {
           const days = data.lastPurchase && data.lastPurchase.days;
           const plan = PLAN_BY_DAYS[days] || { value: 10.99, label: 'PCC Mastery access' };
           trackPurchase(sessionId, plan.value, plan.label);
-          trackAdsPurchase(plan.value, sessionId);
+          // Pass the buyer's email for Enhanced Conversions (hashed on-device by gtag).
+          trackAdsPurchase(plan.value, sessionId, data.email);
         }
         return;
       }

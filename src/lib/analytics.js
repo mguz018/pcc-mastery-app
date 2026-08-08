@@ -12,7 +12,11 @@ export function initAnalytics() {
   window.dataLayer = window.dataLayer || [];
   window.gtag = function () { window.dataLayer.push(arguments); };
   window.gtag('js', new Date());
-  window.gtag('config', GA_ID, { send_page_view: false });
+  // allow_enhanced_conversions lets gtag send a hashed email with conversions,
+  // recovering sales that cookies miss (big deal at ~92% mobile). Requires
+  // Enhanced Conversions to also be turned on for the conversion action in the
+  // Google Ads UI ("Google tag" method).
+  window.gtag('config', GA_ID, { send_page_view: false, allow_enhanced_conversions: true });
   loaded = true;
 }
 
@@ -39,9 +43,12 @@ export const trackPurchase = (sessionId, value, plan) =>
 // optimize toward sales (and their real dollar value). send_to is the account's
 // conversion ID + label; transaction_id lets Google de-duplicate repeat loads.
 const ADS_PURCHASE = 'AW-17793251865/E10uCJHChM8bEJn0vaRC';
-export const trackAdsPurchase = (value, transactionId) => {
+export const trackAdsPurchase = (value, transactionId, email) => {
   if (import.meta.env.DEV) { console.debug('[analytics] ads conversion', value); return; }
   if (typeof window.gtag === 'function') {
+    // Enhanced Conversions: gtag hashes this email on-device (SHA-256) before it
+    // ever leaves the browser, then Google matches it to the ad click.
+    if (email) window.gtag('set', 'user_data', { email });
     window.gtag('event', 'conversion', {
       send_to: ADS_PURCHASE,
       value,
