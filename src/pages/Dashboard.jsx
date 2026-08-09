@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Seo from '../components/Seo';
 import { useAuth } from '../lib/AuthContext';
@@ -36,6 +36,13 @@ export default function Dashboard() {
       setProg(getProgress());
     }
   };
+
+  // Refresh when the sync layer pulls newer progress from another device.
+  useEffect(() => {
+    const refresh = () => setProg(getProgress());
+    window.addEventListener('pcc-progress', refresh);
+    return () => window.removeEventListener('pcc-progress', refresh);
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto px-5 py-14">

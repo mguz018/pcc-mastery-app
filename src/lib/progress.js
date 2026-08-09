@@ -24,8 +24,20 @@ function read() {
   }
 }
 
+// Optional hook the sync layer registers so every local change can be pushed to
+// Firestore. Best-effort: sync failures never break local persistence.
+let onWrite = null;
+export function setWriteHook(fn) { onWrite = fn; }
+
 function write(p) {
   try { localStorage.setItem(KEY, JSON.stringify(p)); } catch { /* private mode */ }
+  if (onWrite) { try { onWrite(p); } catch { /* sync is best-effort */ } }
+}
+
+// Overwrite local storage WITHOUT firing the write hook — used to apply data
+// pulled from the cloud so it doesn't immediately echo back.
+export function replaceLocal(blob) {
+  try { localStorage.setItem(KEY, JSON.stringify(blob)); } catch { /* ignore */ }
 }
 
 // Local calendar-day key, so streaks follow the user's own days.
@@ -88,7 +100,11 @@ export function hasProgress() {
 }
 
 export function resetProgress() {
-  try { localStorage.removeItem(KEY); } catch { /* ignore */ }
+  // Write a fresh, timestamped blank so the reset syncs to the cloud too
+  // (rather than a silent removeItem that the sync layer wouldn't see).
+  const blank = empty();
+  blank.updatedAt = Date.now();
+  write(blank);
 }
 
 // Question ids the user has missed and not yet re-answered correctly.

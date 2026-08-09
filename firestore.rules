@@ -5,7 +5,14 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if request.auth != null && request.auth.uid == userId;
       // Webhook uses Admin SDK, so it bypasses these rules to write.
+      // Clients can't write here, so premium status can't be forged.
       allow write: if false;
+    }
+
+    // Cross-device practice progress. Owner-only read/write. Kept separate from
+    // /users so clients can sync progress without being able to touch premium.
+    match /progress/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
     // Default deny for everything else.

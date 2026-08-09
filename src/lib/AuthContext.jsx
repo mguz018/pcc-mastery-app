@@ -6,6 +6,7 @@ import {
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { trackLogin, trackSignUp } from './analytics';
+import { startSync, stopSync } from './sync';
 
 // Comped accounts. Kept here rather than in Firestore so you can grant access
 // without touching the database; move to Firestore if the list grows.
@@ -53,8 +54,13 @@ export function AuthProvider({ children }) {
 
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-      if (u) await refreshPremium(u);
-      else setPremium(null);
+      if (u) {
+        await refreshPremium(u);
+        startSync(u); // pull cloud progress + mirror future changes
+      } else {
+        setPremium(null);
+        stopSync();
+      }
       setLoading(false);
     });
     // Don't let a hung auth request block the whole app.
