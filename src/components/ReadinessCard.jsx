@@ -100,7 +100,7 @@ export default function ReadinessCard({ progress, isPremium }) {
       {!isPremium && (
         <p className="text-xs text-slate-500 mt-5 border-t border-slate-200 dark:border-white/10 pt-4">
           This estimate is based on the free questions.{' '}
-          <Link to="/pricing" className="text-orange-500 font-semibold hover:underline">Unlock all 490</Link>{' '}
+          <Link to="/pricing" className="text-orange-500 font-semibold hover:underline">Unlock all 500</Link>{' '}
           for an accurate, blueprint-weighted readiness score.
         </p>
       )}

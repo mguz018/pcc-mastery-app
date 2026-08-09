@@ -78,11 +78,11 @@ export default function Practice({ review = false }) {
     trackPaywallHit();
     return (
       <div className="max-w-xl mx-auto px-5 py-24 text-center">
-        <Seo title="Unlock full access" description="Unlock all 490 PCC practice questions." path="/practice" noindex />
+        <Seo title="Unlock full access" description="Unlock all 500 PCC practice questions." path="/practice" noindex />
         <span className="text-5xl block mb-5" aria-hidden="true">🔓</span>
         <h1 className="font-display text-3xl font-bold mb-4">You've used the 10 free questions</h1>
         <p className="text-slate-600 dark:text-slate-400 mb-6">
-          Keep going with the full bank — <span className="font-semibold">490 real-format questions</span> across
+          Keep going with the full bank — <span className="font-semibold">500 real-format questions</span> across
           all eight competencies, timed mock exams, and a readiness score.
         </p>
         <ul className="text-sm text-slate-600 dark:text-slate-300 mb-8 inline-flex flex-col gap-2 text-left">
