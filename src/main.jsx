@@ -9,6 +9,14 @@ import './index.css';
 
 initAnalytics();
 
+// Register the service worker in production for install + offline support.
+// Dev is skipped so Vite HMR isn't fighting a cache.
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((e) => console.debug('SW registration failed:', e.message));
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ErrorBoundary>

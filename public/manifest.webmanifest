@@ -1,0 +1,15 @@
+{
+  "name": "PCC Mastery — ICF PCC Exam Prep",
+  "short_name": "PCC Mastery",
+  "description": "Practice the real ICF PCC credentialing exam in the authentic BEST/WORST format, with a readiness score and timed mock exams.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
