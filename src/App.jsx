@@ -18,6 +18,8 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Login = lazy(() => import('./pages/Login'));
 const About = lazy(() => import('./pages/About'));
 const PrepGuide = lazy(() => import('./pages/PrepGuide'));
+const Guides = lazy(() => import('./pages/Guides'));
+const Guide = lazy(() => import('./pages/Guide'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 export default function App() {
@@ -33,6 +35,8 @@ export default function App() {
             <Route path="pricing" element={<Pricing />} />
             <Route path="about" element={<About />} />
             <Route path="prep-guide" element={<PrepGuide />} />
+            <Route path="guides" element={<Guides />} />
+            <Route path="guides/:slug" element={<Guide />} />
             <Route path="login" element={<Login />} />
 
             {/* Free tier practices here too — the paywall is on content, not the route */}
