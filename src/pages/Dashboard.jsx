@@ -5,6 +5,7 @@ import { useAuth } from '../lib/AuthContext';
 import { COMPETENCIES, slugFor } from '../lib/questions';
 import { accuracy, getProgress, resetProgress } from '../lib/progress';
 import ReadinessCard from '../components/ReadinessCard';
+import AccessPlanCard from '../components/AccessPlanCard';
 
 const missedCountOf = (prog) => Object.keys(prog.missed || {}).length;
 const bookmarkCountOf = (prog) => Object.keys(prog.bookmarks || {}).length;
@@ -14,10 +15,6 @@ export default function Dashboard() {
   const [prog, setProg] = useState(() => getProgress());
   const missed = missedCountOf(prog);
   const bookmarked = bookmarkCountOf(prog);
-
-  const daysLeft = isPremium && premium.expiryDate
-    ? Math.max(0, Math.ceil((premium.expiryDate - Date.now()) / 86400000))
-    : 0;
 
   const weakest = useMemo(() => {
     const entries = Object.entries(prog.byComp).filter(([, s]) => s.answered >= 1);
@@ -53,9 +50,7 @@ export default function Dashboard() {
       </h1>
 
       {isPremium ? (
-        <p className="text-slate-600 dark:text-slate-400 mb-10">
-          Full access — {daysLeft} {daysLeft === 1 ? 'day' : 'days'} remaining.
-        </p>
+        <AccessPlanCard premium={premium} progress={prog} weakestComp={weakest} />
       ) : (
         <div className="rounded-2xl border border-orange-500/30 bg-orange-500/[0.06] p-6 my-8 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
           <div>
@@ -66,22 +61,6 @@ export default function Dashboard() {
             Unlock everything →
           </Link>
         </div>
-      )}
-
-      {/* New premium users: point them at the diagnostic to activate fast */}
-      {isPremium && prog.answered < 20 && (
-        <Link to="/diagnostic" className="lift block rounded-2xl border-2 border-orange-500 bg-orange-500/[0.06] p-6 mb-8">
-          <div className="flex items-center gap-4">
-            <span className="text-3xl shrink-0" aria-hidden="true">🧭</span>
-            <div className="flex-1">
-              <p className="font-bold mb-1">New here? Start with a diagnostic</p>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                A quick 20-question check unlocks your readiness score and shows exactly where to focus first.
-              </p>
-            </div>
-            <span className="text-orange-500 font-bold shrink-0" aria-hidden="true">→</span>
-          </div>
-        </Link>
       )}
 
       {/* Readiness score — the headline "are you ready?" number */}
