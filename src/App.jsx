@@ -11,6 +11,7 @@ import Landing from './pages/Landing';
 const Practice = lazy(() => import('./pages/Practice'));
 const ExamSimulator = lazy(() => import('./pages/ExamSimulator'));
 const Diagnostic = lazy(() => import('./pages/Diagnostic'));
+const Admin = lazy(() => import('./pages/Admin'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Results = lazy(() => import('./pages/Results'));
 const Success = lazy(() => import('./pages/Success'));
@@ -49,6 +50,7 @@ export default function App() {
             <Route path="results" element={<Results />} />
 
             <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
             <Route path="success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
