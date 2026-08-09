@@ -7,11 +7,13 @@ import { accuracy, getProgress, resetProgress } from '../lib/progress';
 import ReadinessCard from '../components/ReadinessCard';
 
 const missedCountOf = (prog) => Object.keys(prog.missed || {}).length;
+const bookmarkCountOf = (prog) => Object.keys(prog.bookmarks || {}).length;
 
 export default function Dashboard() {
   const { user, premium, isPremium } = useAuth();
   const [prog, setProg] = useState(() => getProgress());
   const missed = missedCountOf(prog);
+  const bookmarked = bookmarkCountOf(prog);
 
   const daysLeft = isPremium && premium.expiryDate
     ? Math.max(0, Math.ceil((premium.expiryDate - Date.now()) / 86400000))
@@ -57,6 +59,22 @@ export default function Dashboard() {
             Unlock everything →
           </Link>
         </div>
+      )}
+
+      {/* New premium users: point them at the diagnostic to activate fast */}
+      {isPremium && prog.answered < 20 && (
+        <Link to="/diagnostic" className="lift block rounded-2xl border-2 border-orange-500 bg-orange-500/[0.06] p-6 mb-8">
+          <div className="flex items-center gap-4">
+            <span className="text-3xl shrink-0" aria-hidden="true">🧭</span>
+            <div className="flex-1">
+              <p className="font-bold mb-1">New here? Start with a diagnostic</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                A quick 20-question check unlocks your readiness score and shows exactly where to focus first.
+              </p>
+            </div>
+            <span className="text-orange-500 font-bold shrink-0" aria-hidden="true">→</span>
+          </div>
+        </Link>
       )}
 
       {/* Readiness score — the headline "are you ready?" number */}
@@ -132,6 +150,14 @@ export default function Dashboard() {
                 🎯 Review {missed} missed {missed === 1 ? 'question' : 'questions'} →
               </Link>
             )}
+            {bookmarked > 0 && (
+              <Link
+                to="/bookmarks"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/15 font-bold text-sm px-5 py-3 hover:border-orange-500 transition-colors"
+              >
+                🔖 {bookmarked} bookmarked
+              </Link>
+            )}
           </div>
           <button onClick={reset} className="block mt-5 text-xs text-slate-400 hover:text-rose-500">
             Reset progress
@@ -163,6 +189,16 @@ export default function Dashboard() {
             {isPremium
               ? 'A full-length, timed mock exam with a readiness score — closest to the real thing.'
               : 'Try a free timed preview — then unlock full-length mock exams with a readiness score.'}
+          </p>
+        </Link>
+        <Link to="/diagnostic" className="lift rounded-2xl border border-slate-200 dark:border-white/10 p-7">
+          <span className="text-3xl block mb-3" aria-hidden="true">🧭</span>
+          <p className="font-bold text-lg mb-1">
+            Diagnostic
+            {!isPremium && <span className="ml-2 align-middle text-[10px] font-bold uppercase tracking-wide text-orange-500 border border-orange-500/40 rounded-full px-2 py-0.5">Premium</span>}
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            A quick 20-question check that pinpoints your weakest area and sets your readiness score.
           </p>
         </Link>
         <Link to="/prep-guide" className="lift rounded-2xl border border-slate-200 dark:border-white/10 p-7">

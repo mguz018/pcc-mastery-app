@@ -10,6 +10,7 @@ import Landing from './pages/Landing';
 // Split everything below the landing page so first paint stays fast on mobile.
 const Practice = lazy(() => import('./pages/Practice'));
 const ExamSimulator = lazy(() => import('./pages/ExamSimulator'));
+const Diagnostic = lazy(() => import('./pages/Diagnostic'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Results = lazy(() => import('./pages/Results'));
 const Success = lazy(() => import('./pages/Success'));
@@ -38,6 +39,8 @@ export default function App() {
             <Route path="practice" element={<Practice />} />
             <Route path="practice/:competency" element={<Practice />} />
             <Route path="review" element={<Practice review />} />
+            <Route path="bookmarks" element={<Practice bookmarks />} />
+            <Route path="diagnostic" element={<Diagnostic />} />
             <Route path="exam" element={<ExamSimulator />} />
             <Route path="results" element={<Results />} />
 

@@ -9,6 +9,7 @@ const empty = () => ({
   byComp: {}, // { [competencyId]: { answered, correct } }
   byDomain: {}, // { [domain]: { answered, correct } } — for blueprint-weighted readiness
   missed: {}, // { [questionId]: true } — questions to re-drill, cleared once answered right
+  bookmarks: {}, // { [questionId]: true } — user-flagged questions to revisit
   sessions: 0,
   streak: { current: 0, longest: 0, lastDay: null },
   updatedAt: null
@@ -97,6 +98,31 @@ export function getMissedIds() {
 
 export function missedCount() {
   return Object.keys(read().missed || {}).length;
+}
+
+// Bookmarks — user-flagged questions to revisit. Toggled directly and persist
+// until the user removes them (unlike the auto-managed re-drill queue).
+export function toggleBookmark(id) {
+  const p = read();
+  if (!p.bookmarks) p.bookmarks = {};
+  const key = String(id);
+  const on = !p.bookmarks[key];
+  if (on) p.bookmarks[key] = true; else delete p.bookmarks[key];
+  p.updatedAt = Date.now();
+  write(p);
+  return on;
+}
+
+export function isBookmarked(id) {
+  return !!(read().bookmarks || {})[String(id)];
+}
+
+export function getBookmarkedIds() {
+  return Object.keys(read().bookmarks || {});
+}
+
+export function bookmarkCount() {
+  return Object.keys(read().bookmarks || {}).length;
 }
 
 export function accuracy(stats) {

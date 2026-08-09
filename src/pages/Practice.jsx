@@ -4,13 +4,13 @@ import Seo from '../components/Seo';
 import Spinner from '../components/Spinner';
 import { useAuth } from '../lib/AuthContext';
 import { COMPETENCIES, COMPETENCY_SLUGS, loadQuestions, shuffle } from '../lib/questions';
-import { getMissedIds, recordSession } from '../lib/progress';
+import { getBookmarkedIds, getMissedIds, isBookmarked, recordSession, toggleBookmark } from '../lib/progress';
 import { trackPaywallHit, trackPracticeComplete, trackQuestionAnswered } from '../lib/analytics';
 
 const SESSION_LENGTH = 10;
 const REVIEW_LENGTH = 15;
 
-export default function Practice({ review = false }) {
+export default function Practice({ review = false, bookmarks = false }) {
   const { competency: slug } = useParams();
   const navigate = useNavigate();
   const { isPremium } = useAuth();
@@ -21,9 +21,11 @@ export default function Practice({ review = false }) {
   const [worst, setWorst] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [answers, setAnswers] = useState([]);
+  const [bmarked, setBmarked] = useState(false);
 
   const competencyId = slug ? COMPETENCY_SLUGS[slug] : null;
   const invalidSlug = Boolean(slug && !competencyId);
+  const listMode = review || bookmarks; // a curated set (missed/bookmarked), not a fresh draw
 
   useEffect(() => { loadQuestions().then(setAll); }, []);
 
@@ -33,17 +35,26 @@ export default function Practice({ review = false }) {
     if (review) {
       const missed = new Set(getMissedIds().map(String));
       pool = pool.filter((q) => missed.has(String(q.id)));
+    } else if (bookmarks) {
+      const saved = new Set(getBookmarkedIds().map(String));
+      pool = pool.filter((q) => saved.has(String(q.id)));
     } else if (competencyId) {
       pool = pool.filter((q) => q.competency === competencyId);
     }
     if (!isPremium) pool = pool.filter((q) => !q.isPremium);
-    return shuffle(pool).slice(0, review ? REVIEW_LENGTH : SESSION_LENGTH);
-  }, [all, competencyId, isPremium, review]);
+    return shuffle(pool).slice(0, listMode ? REVIEW_LENGTH : SESSION_LENGTH);
+  }, [all, competencyId, isPremium, review, bookmarks, listMode]);
 
   // Reset the session whenever the route changes.
   useEffect(() => {
     setIndex(0); setBest(null); setWorst(null); setSubmitted(false); setAnswers([]);
-  }, [slug, isPremium, review]);
+  }, [slug, isPremium, review, bookmarks]);
+
+  // Keep the bookmark toggle in sync with the current question.
+  useEffect(() => {
+    const cur = questions[index];
+    setBmarked(cur ? isBookmarked(cur.id) : false);
+  }, [questions, index]);
 
   if (invalidSlug) {
     return (
@@ -74,6 +85,23 @@ export default function Practice({ review = false }) {
     );
   }
 
+  if (questions.length === 0 && bookmarks) {
+    return (
+      <div className="max-w-xl mx-auto px-5 py-24 text-center">
+        <Seo title="Your bookmarks" description="Revisit the questions you've saved." path="/bookmarks" noindex />
+        <span className="text-5xl block mb-5" aria-hidden="true">🔖</span>
+        <h1 className="font-display text-3xl font-bold mb-4">No bookmarks yet</h1>
+        <p className="text-slate-600 dark:text-slate-400 mb-8">
+          Tap <span className="font-semibold">🔖 Save</span> on any question while practicing to flag it for
+          later — the tricky ones you want to revisit will collect here.
+        </p>
+        <Link to="/practice" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
+          Start practicing →
+        </Link>
+      </div>
+    );
+  }
+
   if (questions.length === 0) {
     trackPaywallHit();
     return (
@@ -98,7 +126,12 @@ export default function Practice({ review = false }) {
   }
 
   const q = questions[index];
-  const title = review ? 'Review your mistakes' : competencyId ? COMPETENCIES[competencyId] : 'Mixed practice';
+  const title = review ? 'Review your mistakes' : bookmarks ? 'Your bookmarks' : competencyId ? COMPETENCIES[competencyId] : 'Mixed practice';
+
+  const toggleBmark = () => {
+    const cur = questions[index];
+    if (cur) setBmarked(toggleBookmark(cur.id));
+  };
 
   const pick = (i) => {
     if (submitted) return;
@@ -162,9 +195,23 @@ export default function Practice({ review = false }) {
         />
       </div>
 
-      <p className="eyebrow text-xs font-bold uppercase text-orange-500 mb-4">
-        {COMPETENCIES[q.competency]}
-      </p>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <p className="eyebrow text-xs font-bold uppercase text-orange-500">
+          {COMPETENCIES[q.competency]}
+        </p>
+        <button
+          onClick={toggleBmark}
+          aria-pressed={bmarked}
+          aria-label={bmarked ? 'Remove bookmark' : 'Bookmark this question'}
+          className={`shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold rounded-full border px-3 py-1.5 transition-colors ${
+            bmarked
+              ? 'border-orange-500 text-orange-600 dark:text-orange-400 bg-orange-500/[0.08]'
+              : 'border-slate-300 dark:border-white/15 text-slate-500 hover:border-orange-500/50'
+          }`}
+        >
+          <span aria-hidden="true">🔖</span> {bmarked ? 'Saved' : 'Save'}
+        </button>
+      </div>
 
       <div className="fade-in" key={q.id}>
         <p className="text-lg leading-relaxed mb-6">{q.scenario}</p>
