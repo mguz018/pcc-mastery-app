@@ -86,14 +86,14 @@ export default function Pricing() {
     <div className="max-w-4xl mx-auto px-5 py-16">
       <Seo
         title="Pricing"
-        description="Unlock all 540 PCC exam practice questions. One-time access from $10.99 — 24-hour, 48-hour, or 1-week. No subscription."
+        description="Unlock all 560 PCC exam practice questions. One-time access from $10.99 — 24-hour, 48-hour, or 1-week. No subscription."
         path="/pricing"
       />
 
       <div className="text-center mb-14">
         <h1 className="font-display text-4xl sm:text-5xl font-bold mb-4">Choose your plan</h1>
         <p className="text-slate-600 dark:text-slate-400">
-          Full access to all 540 questions. One-time payment — nothing recurring.
+          Full access to all 560 questions. One-time payment — nothing recurring.
         </p>
       </div>
 
