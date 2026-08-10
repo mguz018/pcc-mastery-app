@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { computeReadiness } from '../lib/readiness';
+import ShareButton from './ShareButton';
 
 const TONE = {
   emerald: { text: 'text-emerald-600 dark:text-emerald-400', bar: 'bg-emerald-500', ring: 'border-emerald-500/40 bg-emerald-500/[0.05]' },
@@ -95,6 +96,7 @@ export default function ReadinessCard({ progress, isPremium }) {
         <Link to="/practice" className="inline-flex items-center rounded-full border border-slate-300 dark:border-white/15 font-bold text-sm px-5 py-3 hover:border-orange-500 transition-colors">
           Practice more
         </Link>
+        <ShareButton score={r.score} />
       </div>
 
       {!isPremium && (

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Seo from '../components/Seo';
+import Testimonials from '../components/Testimonials';
 import { COMPETENCIES, slugFor } from '../lib/questions';
 
 const DIFFERENCES = [
@@ -108,6 +109,9 @@ export default function Landing() {
           </ul>
         </div>
       </section>
+
+      {/* Testimonials — hidden until real quotes are added */}
+      <Testimonials />
 
       {/* Close */}
       <section className="px-5 py-20">

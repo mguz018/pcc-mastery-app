@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import Seo from '../components/Seo';
+import LeadCapture from '../components/LeadCapture';
 import { GUIDES, getGuide } from '../data/guides';
 
 export default function Guide() {
@@ -54,6 +55,11 @@ export default function Guide() {
         <Link to="/practice" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
           Start practicing free →
         </Link>
+      </div>
+
+      {/* Email capture — guide readers are prime top-of-funnel leads */}
+      <div className="my-12">
+        <LeadCapture source={`guide:${guide.slug}`} />
       </div>
 
       {/* Internal links to keep readers (and crawlers) moving */}

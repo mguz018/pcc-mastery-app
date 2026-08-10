@@ -70,7 +70,7 @@ export default function Admin() {
     [`${stats.conversionRate}%`, 'Conversion'],
     [fmtMoney(stats.revenue), 'Latest-purchase revenue'],
     [stats.premiumActive, 'Active access now'],
-    [stats.syncedLearners, 'Synced learners']
+    [stats.leads ?? 0, 'Email leads']
   ];
 
   return (

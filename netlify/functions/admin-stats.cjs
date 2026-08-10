@@ -66,6 +66,8 @@ exports.handler = async (event) => {
       .slice(0, 10)
       .map(([id, count]) => ({ id: Number(id), count }));
 
+    const leadsSnap = await db.collection('leads').get();
+
     return {
       statusCode: 200,
       headers: { 'content-type': 'application/json' },
@@ -78,7 +80,8 @@ exports.handler = async (event) => {
         planCounts,
         recent: recent.slice(0, 12),
         hardest,
-        syncedLearners: progSnap.size
+        syncedLearners: progSnap.size,
+        leads: leadsSnap.size
       })
     };
   } catch (e) {

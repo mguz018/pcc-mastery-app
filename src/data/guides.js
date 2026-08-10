@@ -188,6 +188,129 @@ export const GUIDES = [
       }
     ],
     cta: 'See where you stand with a blueprint-weighted readiness score. Start practicing free — ten questions, no card.'
+  },
+
+  {
+    slug: 'icf-core-competencies',
+    title: 'The 8 ICF Core Competencies (and How the Exam Tests Them)',
+    metaTitle: 'The 8 ICF Core Competencies Explained',
+    description:
+      'A plain-English overview of the eight ICF Core Competencies and how the PCC credentialing exam tests your ability to recognize them in real scenarios.',
+    readMins: 6,
+    updated: 'August 2026',
+    intro:
+      'The ICF Core Competencies are the backbone of the PCC exam. But the exam doesn\'t ask you to define them — it asks you to recognize them in action. Here\'s each one in plain English, with what it looks like when done well.',
+    body: [
+      {
+        h: 'The four groupings',
+        p: [
+          'ICF organizes the competencies into four broad areas: foundation, co-creating the relationship, communicating effectively, and cultivating learning and growth. On the exam, strong answers almost always reflect these principles: the client leads, the coach partners, awareness is evoked, and ethics are upheld.'
+        ]
+      },
+      {
+        h: 'The eight competencies',
+        list: [
+          'Demonstrates Ethical Practice — acts consistently with the ICF Code of Ethics and coaching\'s scope.',
+          'Embodies a Coaching Mindset — stays open, curious, client-centered, and self-aware.',
+          'Establishes and Maintains Agreements — clarifies what coaching is and co-creates the working agreement.',
+          'Cultivates Trust and Safety — creates a supportive space where the client can be open.',
+          'Maintains Presence — stays fully conscious and responsive with the client, comfortable with not knowing.',
+          'Listens Actively — hears what is and isn\'t said to understand the whole person.',
+          'Evokes Awareness — uses questions and reflections that surface the client\'s own insight.',
+          'Facilitates Client Growth — partners with the client to turn insight into their own action and accountability.'
+        ]
+      },
+      {
+        h: 'How the exam tests them',
+        p: [
+          'Scenarios rarely name a competency. Instead, you\'ll read a coaching moment and choose the best (and sometimes worst) response. The "best" answer is the one that most embodies the competencies together — partnering, evoking, staying present — while the "worst" typically shows the coach directing, advising, or breaching ethics.',
+          'That\'s why practice beats memorization: you\'re training the judgment to spot competent coaching in ambiguity, not reciting the markers.'
+        ]
+      }
+    ],
+    cta: 'Practice recognizing the competencies in realistic scenarios — ten free BEST/WORST questions, no card required.'
+  },
+
+  {
+    slug: 'coaching-vs-mentoring-consulting-therapy',
+    title: 'Coaching vs. Mentoring, Consulting, and Therapy',
+    metaTitle: 'Coaching vs Mentoring vs Consulting vs Therapy',
+    description:
+      'How professional coaching differs from mentoring, consulting, and therapy — a distinction the ICF PCC exam tests heavily through boundary scenarios.',
+    readMins: 5,
+    updated: 'August 2026',
+    intro:
+      'One of the most-tested areas on the PCC exam is the definition and boundaries of coaching. Candidates lose points by slipping into advising or teaching. Here\'s how coaching differs from the disciplines it\'s often confused with.',
+    body: [
+      {
+        h: 'Coaching',
+        p: [
+          'Coaching partners with the client in a thought-provoking process to maximize their personal and professional potential. The client is the expert on their life and holds the agenda and the answers; the coach evokes awareness rather than providing solutions.'
+        ]
+      },
+      {
+        h: 'Coaching vs. mentoring',
+        p: [
+          'A mentor shares their own expertise and experience, guiding a less-experienced person along a path the mentor has walked. Coaching doesn\'t require the coach to have expertise in the client\'s field — the value is in the process, not the coach\'s answers.'
+        ]
+      },
+      {
+        h: 'Coaching vs. consulting',
+        p: [
+          'A consultant diagnoses a problem and delivers recommendations or solutions. In coaching, the client generates their own solutions; the coach who hands over the answer has stepped into consulting.'
+        ]
+      },
+      {
+        h: 'Coaching vs. therapy',
+        p: [
+          'Therapy often works with healing, past wounds, and mental-health conditions, typically with a clinically trained professional. Coaching assumes an emotionally healthy client and works primarily forward. Recognizing when a client\'s needs are beyond coaching — and referring appropriately — is both an ethical duty and a frequent exam theme.'
+        ]
+      },
+      {
+        h: 'Why the exam cares',
+        p: [
+          'Boundary scenarios test whether you\'ll stay in the coaching stance under pressure — when a client asks for advice, wants to be taught, or brings an issue that needs therapy. The best answers keep ownership with the client and hold the boundary with care.'
+        ]
+      }
+    ],
+    cta: 'Sharpen your boundary judgment with realistic scenarios. Try ten free questions — no card required.'
+  },
+
+  {
+    slug: 'pcc-coaching-hours-requirements',
+    title: 'ICF PCC Requirements: Training, Hours & the Exam',
+    metaTitle: 'ICF PCC Requirements: Training, Coaching Hours & Exam',
+    description:
+      'What it takes to earn the ICF PCC credential — accredited training, client coaching hours, mentor coaching, a performance evaluation, and the exam.',
+    readMins: 4,
+    updated: 'August 2026',
+    intro:
+      'Earning the ICF Professional Certified Coach (PCC) credential is more than passing an exam. Here are the pieces you\'ll need to assemble — always confirm current specifics on the official ICF website, since requirements are updated periodically.',
+    body: [
+      {
+        h: 'The core requirements',
+        list: [
+          'Accredited coach training — a substantial number of hours from an ICF-accredited program.',
+          'Client coaching experience — a documented number of paid and pro-bono coaching hours with a range of clients.',
+          'Mentor coaching — hours of mentor coaching over several months to develop your competencies.',
+          'A performance evaluation — a recorded coaching session (or equivalent) assessed at the PCC level.',
+          'The ICF Credentialing Exam — a passing score on the situational-judgment exam.'
+        ]
+      },
+      {
+        h: 'How PCC compares',
+        p: [
+          'PCC sits above the entry-level ACC and below the master-level MCC, requiring meaningfully more training and coaching experience than ACC. It\'s the credential most working coaches target as their professional benchmark.'
+        ]
+      },
+      {
+        h: 'Where the exam fits',
+        p: [
+          'The exam is the same situational-judgment test across credential levels, assessing the Core Competencies and Code of Ethics. Many candidates leave it until last — but because it tests judgment under time pressure, it rewards deliberate, scenario-based practice rather than cramming.'
+        ]
+      }
+    ],
+    cta: 'Once your hours are in, don\'t leave the exam to chance. Practice the real format free — ten questions, no card.'
   }
 ];
 

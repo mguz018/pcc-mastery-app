@@ -2,6 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://pccmastery.com/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://pccmastery.com/pricing</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
-  <url><loc>https://pccmastery.com/prep-guide</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/guides</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://pccmastery.com/guides/icf-pcc-exam-format</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/guides/how-to-prepare-icf-pcc-exam</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/guides/acc-vs-pcc-vs-mcc</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/guides/icf-pcc-exam-passing-score</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/guides/icf-core-competencies</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/guides/coaching-vs-mentoring-consulting-therapy</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/guides/pcc-coaching-hours-requirements</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/prep-guide</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://pccmastery.com/about</loc><priority>0.6</priority><changefreq>monthly</changefreq></url>
 </urlset>
