@@ -399,7 +399,7 @@ export default function ExamSimulator() {
           <p className="font-bold text-lg mb-2">That was a {questions.length}-question preview</p>
           <p className="text-sm text-slate-600 dark:text-slate-300 mb-5">
             Unlock full-length timed exams (up to 60 questions), the real exam blueprint mix, and a
-            saved readiness score — plus all 600 practice questions across every competency.
+            saved readiness score — plus all 620 practice questions across every competency.
           </p>
           <Link to="/pricing" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
             See plans — from $10.99 →
