@@ -15,7 +15,7 @@ export default function Landing() {
     <>
       <Seo
         path="/"
-        description="The only PCC exam prep that simulates the actual ICF BEST/WORST question format. 560 scenario-based questions across all 8 Core Competencies."
+        description="The only PCC exam prep that simulates the actual ICF BEST/WORST question format. 580 scenario-based questions across all 8 Core Competencies."
       />
 
       {/* Hero */}
@@ -36,7 +36,7 @@ export default function Landing() {
 
           <p className="reveal text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed mb-10" style={{ animationDelay: '.25s' }}>
             Every other resource explains the competencies. This one puts you in the
-            BEST/WORST format you'll actually sit for — 560 scenarios, all eight competencies.
+            BEST/WORST format you'll actually sit for — 580 scenarios, all eight competencies.
           </p>
 
           <div className="reveal flex flex-col sm:flex-row gap-4 justify-center items-center" style={{ animationDelay: '.35s' }}>
@@ -49,7 +49,7 @@ export default function Landing() {
           </div>
 
           <dl className="reveal mt-16 grid grid-cols-3 gap-4 max-w-lg mx-auto" style={{ animationDelay: '.45s' }}>
-            {[['560', 'Questions'], ['8', 'Competencies'], ['100%', 'Exam format']].map(([n, l]) => (
+            {[['580', 'Questions'], ['8', 'Competencies'], ['100%', 'Exam format']].map(([n, l]) => (
               <div key={l}>
                 <dt className="sr-only">{l}</dt>
                 <dd>
@@ -120,7 +120,7 @@ export default function Landing() {
             Ready to sit the real thing?
           </h2>
           <p className="text-white/90 mb-8 max-w-lg mx-auto">
-            Start with ten free questions. Unlock all 560 when you're ready.
+            Start with ten free questions. Unlock all 580 when you're ready.
           </p>
           <Link to="/pricing" className="lift inline-flex items-center bg-white text-orange-600 font-bold py-4 px-10 rounded-full text-lg shadow-xl">
             See plans →
