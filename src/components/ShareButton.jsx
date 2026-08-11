@@ -8,7 +8,7 @@ export default function ShareButton({ score, className = '' }) {
   const text =
     typeof score === 'number'
       ? `I'm at ${score}% readiness for the ICF PCC exam with PCC Mastery. Practice the real BEST/WORST format:`
-      : 'Prepping for the ICF PCC exam? PCC Mastery has 580 questions in the real BEST/WORST format:';
+      : 'Prepping for the ICF PCC exam? PCC Mastery has 600 questions in the real BEST/WORST format:';
 
   const share = async () => {
     if (navigator.share) {
