@@ -17,6 +17,13 @@ const MANUAL_ACCESS = [
   'aufdemarke@gmail.com'
 ];
 
+// Time-boxed comps: email -> expiry date (YYYY-MM-DD, end of that day, local).
+// Access turns on the moment they sign in with this email and turns off
+// automatically after the date — no database entry needed.
+const TIMED_ACCESS = {
+  'tara@mento.co': '2026-09-10' // 30-day access, granted 2026-08-11
+};
+
 const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
@@ -28,10 +35,22 @@ export function AuthProvider({ children }) {
   const refreshPremium = useCallback(async (u = auth?.currentUser) => {
     if (!u || !db) { setPremium(null); return null; }
 
-    if (MANUAL_ACCESS.includes((u.email || '').toLowerCase())) {
+    const email = (u.email || '').toLowerCase();
+
+    if (MANUAL_ACCESS.includes(email)) {
       const comped = { isPremium: true, expiryDate: Date.now() + 3.15e10, comped: true };
       setPremium(comped);
       return comped;
+    }
+
+    if (TIMED_ACCESS[email]) {
+      const expiryDate = new Date(`${TIMED_ACCESS[email]}T23:59:59`).getTime();
+      if (Date.now() < expiryDate) {
+        const comped = { isPremium: true, expiryDate, comped: true };
+        setPremium(comped);
+        return comped;
+      }
+      // Expired — fall through to the normal Firestore check below.
     }
 
     try {
