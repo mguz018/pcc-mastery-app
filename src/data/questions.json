@@ -20858,5 +20858,425 @@
       "worst": "Assuming their boss's expectations are what they want erases the client's own perspective."
     },
     "deeperInsight": "Active listening notices when a client answers a different question. Gently returning to the original invites them toward what they may be sidestepping."
+  },
+  {
+    "id": 741,
+    "competency": 1,
+    "domain": "ethics",
+    "isPremium": true,
+    "scenario": "A client asks you to write up a formal 'personality diagnosis' of them that they can hand to HR.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Write the diagnosis; you know them well",
+      "Clarify that diagnosing isn't part of coaching, and offer coaching support instead of a clinical-style label",
+      "Write an informal 'assessment' that reads like a diagnosis",
+      "Diagnose them and recommend HR act on it"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Clarifying that coaching doesn't diagnose, while offering real coaching support, keeps you within scope.",
+      "worst": "Issuing a diagnosis and telling HR to act on it steps well outside coaching and could harm the client."
+    },
+    "deeperInsight": "Coaches don't diagnose or produce clinical-style assessments. That's outside scope and belongs to qualified professionals."
+  },
+  {
+    "id": 742,
+    "competency": 1,
+    "domain": "ethics",
+    "isPremium": true,
+    "scenario": "A colleague invites you to co-author a study on coaching outcomes and suggests inflating the sample size and results to get it published.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Go along; a stronger study gets more attention",
+      "Refuse to falsify data and insist the study report only what the real evidence supports",
+      "Inflate the numbers a little for a cleaner story",
+      "Add fabricated participants to reach significance"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Reporting only what the real evidence supports keeps the research honest and credible.",
+      "worst": "Adding fabricated participants to manufacture significance is research fraud."
+    },
+    "deeperInsight": "Integrity extends to research and publications. Coaches don't falsify data to strengthen a study's conclusions."
+  },
+  {
+    "id": 743,
+    "competency": 1,
+    "domain": "ethics",
+    "isPremium": true,
+    "scenario": "A corporate sponsor demands the raw recordings of your sessions with their employee, arguing they paid so they own them.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Hand over the recordings; the sponsor paid",
+      "Uphold the confidentiality agreement, explaining the sessions are confidential and not the sponsor's to access",
+      "Give edited recordings instead",
+      "Hand them over and let the client find out later"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Upholding the confidentiality agreement protects the client, regardless of who paid.",
+      "worst": "Handing over session recordings and leaving the client to find out later breaches confidentiality and trust."
+    },
+    "deeperInsight": "Paying for coaching doesn't grant ownership of confidential sessions. Recordings stay confidential per the agreement, not the sponsor's to take."
+  },
+  {
+    "id": 744,
+    "competency": 1,
+    "domain": "ethics",
+    "isPremium": true,
+    "scenario": "A client mentions they sit on a hiring panel that is about to decide on your close relative's application.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Quietly put in a good word for your relative through the client",
+      "Disclose the conflict of interest and keep it entirely out of the coaching, avoiding any influence",
+      "Hint at how great your relative is during a session",
+      "Coach the client toward hiring your relative"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Disclosing the conflict and keeping it out of the coaching protects your neutrality and the fairness of their decision.",
+      "worst": "Coaching the client toward hiring your relative abuses the relationship for personal gain."
+    },
+    "deeperInsight": "Personal conflicts of interest are disclosed and firewalled. A coach never uses the coaching relationship to influence decisions for personal benefit."
+  },
+  {
+    "id": 745,
+    "competency": 1,
+    "domain": "ethics",
+    "isPremium": true,
+    "scenario": "A client asks you to label your coaching sessions as 'therapy' on receipts so their insurance will reimburse them.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Relabel it; it helps the client afford it",
+      "Decline to mislabel coaching as therapy and describe the service accurately",
+      "Use ambiguous wording that could pass as therapy",
+      "Relabel it and add a fake diagnosis code"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Describing the service accurately keeps you out of insurance fraud and honest about what you provide.",
+      "worst": "Adding a fake diagnosis code to bill coaching as therapy is insurance fraud."
+    },
+    "deeperInsight": "Coaching isn't therapy, and mislabeling it for reimbursement is fraud. Coaches represent their services accurately, whatever the client's cost pressures."
+  },
+  {
+    "id": 746,
+    "competency": 1,
+    "domain": "ethics",
+    "isPremium": true,
+    "scenario": "Your website's wording strongly implies the ICF officially endorses and partners with your program, which it does not.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Keep it; the implied endorsement builds trust",
+      "Revise the wording so it doesn't imply an endorsement or partnership you don't have",
+      "Keep it but shrink the disclaimer",
+      "Add ICF logos to strengthen the impression"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Revising the wording to avoid implying a nonexistent endorsement keeps your marketing honest.",
+      "worst": "Adding ICF logos to reinforce a false partnership deepens the misrepresentation."
+    },
+    "deeperInsight": "Coaches don't imply affiliations or endorsements they don't have. Misrepresenting a relationship with a professional body deceives the public."
+  },
+  {
+    "id": 747,
+    "competency": 1,
+    "domain": "ethics",
+    "isPremium": true,
+    "scenario": "An employer's EAP contract covers six sessions per employee, but a client wants you to keep secretly billing the EAP for extra sessions beyond the cap.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Keep billing the EAP; they can afford it",
+      "Decline to bill beyond the contracted cap and discuss legitimate options for continuing",
+      "Bill a few extra and stop before it's noticed",
+      "Bill the extras under another employee's allowance"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Billing only within the contracted cap — and finding legitimate ways to continue — keeps your billing honest.",
+      "worst": "Billing extra sessions under another employee's allowance is fraud that also robs that employee."
+    },
+    "deeperInsight": "Contract terms bound honest billing. Coaches don't bill beyond agreed limits or shift charges dishonestly to others."
+  },
+  {
+    "id": 748,
+    "competency": 1,
+    "domain": "ethics",
+    "isPremium": true,
+    "scenario": "Before you share a 360-feedback report with a client, they ask you to quietly delete the one unflattering comment.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Delete it; it'll only upset them",
+      "Keep the report intact and support the client in processing the difficult feedback",
+      "Soften the comment's wording without telling them",
+      "Delete it and any other criticism too"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Keeping the feedback intact and helping the client work with it preserves the report's honesty and value.",
+      "worst": "Stripping out the criticism destroys the integrity of the feedback the report was meant to deliver."
+    },
+    "deeperInsight": "Altering assessment data to make it more comfortable corrupts it. Coaches keep feedback honest and support clients in facing it."
+  },
+  {
+    "id": 749,
+    "competency": 1,
+    "domain": "boundaries",
+    "isPremium": true,
+    "scenario": "A client, short on funds for a venture, asks you to co-sign a personal loan as their guarantor.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Co-sign; you believe in them",
+      "Warmly decline a financial-guarantor role outside coaching and keep the relationship professional",
+      "Co-sign for a smaller amount",
+      "Co-sign and take a cut of the venture"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Declining the guarantor role keeps you out of a financial entanglement that would compromise the coaching.",
+      "worst": "Co-signing and taking a cut ties your finances to the client's venture and destroys your neutrality."
+    },
+    "deeperInsight": "Financial entanglements like guaranteeing loans create serious conflicts and liability. Coaches keep the relationship professional and arm's-length."
+  },
+  {
+    "id": 750,
+    "competency": 1,
+    "domain": "boundaries",
+    "isPremium": true,
+    "scenario": "A client wants to publicly tag you as their 'official coach' on social media and have you co-sign their promotional posts.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Agree to whatever they post and tag",
+      "Discuss confidentiality and how you're comfortable being represented, and agree clear terms before any public tagging",
+      "Let them post anything as long as it flatters you",
+      "Agree and let them speak for you publicly however they like"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Agreeing clear terms for any public association protects confidentiality and how you're represented.",
+      "worst": "Letting the client speak for you publicly however they like surrenders control of your professional representation."
+    },
+    "deeperInsight": "Public association affects confidentiality and reputation. Coaches set clear terms rather than letting clients represent them without agreement."
+  },
+  {
+    "id": 751,
+    "competency": 3,
+    "domain": "boundaries",
+    "isPremium": true,
+    "scenario": "A client keeps bringing a different colleague to each session, expecting you to coach whoever happens to show up.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Coach whoever shows up each time",
+      "Clarify who the client is and re-contract clearly before coaching anyone new",
+      "Coach them all interchangeably without any agreement",
+      "Let sessions become open drop-in group meetings"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Clarifying who the client is and re-contracting protects the focus and agreements of the coaching.",
+      "worst": "Letting sessions become open drop-ins with no agreement dissolves the coaching relationship entirely."
+    },
+    "deeperInsight": "Coaching needs a clear client and agreement. Coaches don't coach a rotating cast without re-contracting who the work is for."
+  },
+  {
+    "id": 752,
+    "competency": 1,
+    "domain": "boundaries",
+    "isPremium": true,
+    "scenario": "A client's company offers to pay to license your session notes to use as 'training data' for their internal AI.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Take the money; the notes are yours to sell",
+      "Decline to hand over confidential client material without the clients' informed consent, regardless of payment",
+      "Sell 'anonymized' notes without asking clients",
+      "Sell the full notes and don't mention it to clients"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Protecting confidential client material — and requiring informed consent — honors your clients' trust over the payment.",
+      "worst": "Selling clients' full session notes without telling them is a serious breach of confidentiality."
+    },
+    "deeperInsight": "Session notes hold clients' confidential disclosures. They're not the coach's to sell, even anonymized, without informed consent."
+  },
+  {
+    "id": 753,
+    "competency": 3,
+    "domain": "boundaries",
+    "isPremium": true,
+    "scenario": "A client wants you to give them a letter grade (A through F) on their performance at the end of every session.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Grade them each session as they ask",
+      "Explore what they're really seeking, and offer coaching feedback and self-assessment rather than a judgmental grade",
+      "Give grades but keep them generous",
+      "Grade them harshly to 'motivate' them"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Exploring the real need and offering coaching feedback keeps you in a developmental, not evaluative, role.",
+      "worst": "Handing out harsh grades to motivate casts you as a judge and undermines safety."
+    },
+    "deeperInsight": "Coaching is developmental, not a grading exercise. Coaches surface the underlying need and support self-assessment rather than judging."
+  },
+  {
+    "id": 754,
+    "competency": 1,
+    "domain": "boundaries",
+    "isPremium": true,
+    "scenario": "One client spends sessions venting about a coworker who, unknown to them, is also your client.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Share your own take on the coworker to help",
+      "Keep both clients' confidentiality strictly and coach the venting client on their own experience and choices",
+      "Subtly defend the other client",
+      "Pass along the venting client's complaints to the coworker"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Holding both clients' confidentiality and coaching the person's own experience protects everyone's trust.",
+      "worst": "Passing one client's complaints along to the other breaches confidentiality on both sides."
+    },
+    "deeperInsight": "When two clients are connected, the coach protects each one's confidentiality and keeps the work on the speaker's own experience."
+  },
+  {
+    "id": 755,
+    "competency": 1,
+    "domain": "boundaries",
+    "isPremium": true,
+    "scenario": "At in-person sessions, a client repeatedly initiates long, lingering hugs that feel like they cross a professional line.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Allow it to avoid an awkward moment",
+      "Kindly set a clear physical boundary that keeps the relationship professional",
+      "Go along but feel increasingly uncomfortable",
+      "Reciprocate to keep them comfortable"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Setting a clear, kind physical boundary keeps the relationship professional and comfortable for both.",
+      "worst": "Reciprocating the lingering physical contact escalates a boundary that should be held."
+    },
+    "deeperInsight": "Physical boundaries are part of a professional relationship. Coaches set them clearly rather than tolerating or reciprocating discomfort."
+  },
+  {
+    "id": 756,
+    "competency": 1,
+    "domain": "boundaries",
+    "isPremium": true,
+    "scenario": "To help with their focus goal, a client wants to give you access to an app that lets you monitor their phone and screen time in real time.",
+    "question": "What is the most appropriate response?",
+    "options": [
+      "Accept the access; it'll help hold them accountable",
+      "Decline the surveillance role and design accountability the client owns and controls",
+      "Take the access but rarely check it",
+      "Take full access and police their usage"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Designing client-owned accountability keeps you out of a surveillance role that isn't coaching.",
+      "worst": "Taking full access to police the client's phone casts you as a monitor, not a coach."
+    },
+    "deeperInsight": "Coaching builds self-directed accountability. Surveilling a client's device is overreach that undermines their autonomy and your role."
+  },
+  {
+    "id": 757,
+    "competency": 2,
+    "domain": "competency",
+    "isPremium": true,
+    "scenario": "A client calls you their 'guru' and says they'll just do whatever you tell them to do.",
+    "question": "What is the most effective coaching move?",
+    "options": [
+      "Accept the guru role and start directing them",
+      "Gently decline the guru framing and re-establish a partnership where they lead their own choices",
+      "Enjoy it and give them your prescriptions",
+      "Tell them exactly what to do, since they asked"
+    ],
+    "best": 1,
+    "worst": 0,
+    "explanation": {
+      "best": "Declining the guru role and re-establishing partnership keeps the client in charge of their own choices.",
+      "worst": "Accepting the guru role and directing the client fosters dependence and abandons the coaching stance."
+    },
+    "deeperInsight": "A coaching mindset resists being the guru. Coaches partner with clients as the experts on their own lives, not authorities to be obeyed."
+  },
+  {
+    "id": 758,
+    "competency": 4,
+    "domain": "competency",
+    "isPremium": true,
+    "scenario": "Partway into the work, a client whose life experience differs greatly from yours quietly admits they doubt you can truly grasp their world.",
+    "question": "What is the most effective coaching move?",
+    "options": [
+      "Assure them you understand completely and move on",
+      "Welcome the concern with humility, invite them to share their experience, and commit to understanding rather than assuming",
+      "Insist your training makes background irrelevant",
+      "Change the subject to avoid the discomfort"
+    ],
+    "best": 1,
+    "worst": 0,
+    "explanation": {
+      "best": "Meeting the concern with humility and genuine curiosity builds the safety and trust for real work.",
+      "worst": "Claiming you understand completely dismisses the client's lived experience and undermines trust."
+    },
+    "deeperInsight": "Cultivating safety includes cultural humility. Coaches acknowledge the limits of their understanding and commit to learning the client's world."
+  },
+  {
+    "id": 759,
+    "competency": 7,
+    "domain": "competency",
+    "isPremium": true,
+    "scenario": "The moment you raise a possibility, the client snaps, 'That would never work,' and moves on.",
+    "question": "What is the most effective coaching move?",
+    "options": [
+      "Accept that it won't work and drop it",
+      "Gently invite curiosity about the quick 'never,' exploring what's behind the instant dismissal",
+      "Argue that it actually would work",
+      "Insist they try it anyway"
+    ],
+    "best": 1,
+    "worst": 3,
+    "explanation": {
+      "best": "Exploring the quick 'never' surfaces the assumption or fear behind the instant dismissal.",
+      "worst": "Insisting the client try your idea overrides their autonomy and skips the awareness entirely."
+    },
+    "deeperInsight": "A snap dismissal often guards an assumption. Evoking awareness gently examines it rather than accepting it or forcing the coach's idea."
+  },
+  {
+    "id": 760,
+    "competency": 8,
+    "domain": "competency",
+    "isPremium": true,
+    "scenario": "After a discouraging setback, a client says they want to end the coaching entirely, sounding defeated.",
+    "question": "What is the most effective coaching move?",
+    "options": [
+      "Talk them out of quitting so you keep the client",
+      "Explore what's driving the impulse and support them in making a clear, self-directed decision",
+      "Immediately agree and end it to respect their wish",
+      "Guilt them about giving up so easily"
+    ],
+    "best": 1,
+    "worst": 0,
+    "explanation": {
+      "best": "Exploring what's driving the impulse and supporting a self-directed decision honors the client's autonomy.",
+      "worst": "Talking the client out of quitting to keep them puts your interest above their autonomy."
+    },
+    "deeperInsight": "Facilitating growth respects the client's right to decide, including whether to continue. The coach explores, but the choice is genuinely theirs."
   }
 ]
