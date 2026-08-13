@@ -34,15 +34,9 @@ export default function Pricing() {
 
   useEffect(() => { trackViewPricing(); }, []);
 
-  const checkout = async () => {
+  // The actual Stripe hand-off. Assumes a signed-in user.
+  const startCheckout = async (plan) => {
     setError('');
-
-    if (!user) {
-      navigate('/login', { state: { from: '/pricing' } });
-      return;
-    }
-
-    const plan = PLANS[selected];
     setBusy(true);
     trackBeginCheckout(plan.label, plan.price);
 
@@ -69,6 +63,31 @@ export default function Pricing() {
       setBusy(false);
     }
   };
+
+  const checkout = () => {
+    setError('');
+    if (!user) {
+      // Remember the chosen plan so we can resume checkout the moment they
+      // finish signing up — no dead-end bounce back to the pricing page.
+      try { sessionStorage.setItem('pcc_checkout_plan', selected); } catch { /* private mode */ }
+      navigate('/login', { state: { from: '/pricing' } });
+      return;
+    }
+    startCheckout(PLANS[selected]);
+  };
+
+  // Resume checkout automatically after a buy-click that routed through sign-up.
+  useEffect(() => {
+    if (!user) return;
+    let pending;
+    try { pending = sessionStorage.getItem('pcc_checkout_plan'); } catch { /* private mode */ }
+    if (pending && PLANS[pending]) {
+      try { sessionStorage.removeItem('pcc_checkout_plan'); } catch { /* private mode */ }
+      setSelected(pending);
+      startCheckout(PLANS[pending]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   if (isPremium) {
     return (

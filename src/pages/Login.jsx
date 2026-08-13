@@ -8,8 +8,9 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state && location.state.from) || '/dashboard';
+  const buying = from === '/pricing'; // arrived here from a buy click
 
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState(buying ? 'register' : 'login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -63,10 +64,12 @@ export default function Login() {
       />
 
       <h1 className="font-display text-3xl font-bold mb-2">
-        {mode === 'login' ? 'Sign in' : 'Create your account'}
+        {buying ? 'Almost there' : mode === 'login' ? 'Sign in' : 'Create your account'}
       </h1>
       <p className="text-slate-600 dark:text-slate-400 text-sm mb-8">
-        {mode === 'login' ? 'Your progress and access live here.' : 'Free to start — no card needed.'}
+        {buying
+          ? 'Create your account and we’ll take you straight to secure checkout.'
+          : mode === 'login' ? 'Your progress and access live here.' : 'Free to start — no card needed.'}
       </p>
 
       <div className="space-y-3">
