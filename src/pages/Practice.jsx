@@ -4,13 +4,13 @@ import Seo from '../components/Seo';
 import Spinner from '../components/Spinner';
 import { useAuth } from '../lib/AuthContext';
 import { COMPETENCIES, COMPETENCY_SLUGS, loadQuestions, shuffle } from '../lib/questions';
-import { getBookmarkedIds, getMissedIds, isBookmarked, recordSession, toggleBookmark } from '../lib/progress';
+import { getBookmarkedIds, getDueIds, getMissedIds, isBookmarked, recordSession, toggleBookmark } from '../lib/progress';
 import { trackPaywallHit, trackPracticeComplete, trackQuestionAnswered } from '../lib/analytics';
 
 const SESSION_LENGTH = 10;
 const REVIEW_LENGTH = 15;
 
-export default function Practice({ review = false, bookmarks = false }) {
+export default function Practice({ review = false, bookmarks = false, due = false }) {
   const { competency: slug } = useParams();
   const navigate = useNavigate();
   const { isPremium } = useAuth();
@@ -25,7 +25,7 @@ export default function Practice({ review = false, bookmarks = false }) {
 
   const competencyId = slug ? COMPETENCY_SLUGS[slug] : null;
   const invalidSlug = Boolean(slug && !competencyId);
-  const listMode = review || bookmarks; // a curated set (missed/bookmarked), not a fresh draw
+  const listMode = review || bookmarks || due; // a curated set, not a fresh draw
 
   useEffect(() => { loadQuestions().then(setAll); }, []);
 
@@ -38,17 +38,20 @@ export default function Practice({ review = false, bookmarks = false }) {
     } else if (bookmarks) {
       const saved = new Set(getBookmarkedIds().map(String));
       pool = pool.filter((q) => saved.has(String(q.id)));
+    } else if (due) {
+      const dueSet = new Set(getDueIds().map(String));
+      pool = pool.filter((q) => dueSet.has(String(q.id)));
     } else if (competencyId) {
       pool = pool.filter((q) => q.competency === competencyId);
     }
     if (!isPremium) pool = pool.filter((q) => !q.isPremium);
     return shuffle(pool).slice(0, listMode ? REVIEW_LENGTH : SESSION_LENGTH);
-  }, [all, competencyId, isPremium, review, bookmarks, listMode]);
+  }, [all, competencyId, isPremium, review, bookmarks, due, listMode]);
 
   // Reset the session whenever the route changes.
   useEffect(() => {
     setIndex(0); setBest(null); setWorst(null); setSubmitted(false); setAnswers([]);
-  }, [slug, isPremium, review, bookmarks]);
+  }, [slug, isPremium, review, bookmarks, due]);
 
   // Keep the bookmark toggle in sync with the current question.
   useEffect(() => {
@@ -77,6 +80,23 @@ export default function Practice({ review = false, bookmarks = false }) {
         <p className="text-slate-600 dark:text-slate-400 mb-8">
           You've correctly answered everything you've attempted so far. Keep practicing —
           any questions you miss will show up here to re-drill.
+        </p>
+        <Link to="/practice" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
+          Keep practicing →
+        </Link>
+      </div>
+    );
+  }
+
+  if (questions.length === 0 && due) {
+    return (
+      <div className="max-w-xl mx-auto px-5 py-24 text-center">
+        <Seo title="Spaced review" description="Review questions scheduled to lock them in." path="/review-due" noindex />
+        <span className="text-5xl block mb-5" aria-hidden="true">🧠</span>
+        <h1 className="font-display text-3xl font-bold mb-4">Nothing due right now</h1>
+        <p className="text-slate-600 dark:text-slate-400 mb-8">
+          You're all caught up. As you practice, questions come back here on a spaced schedule —
+          resurfacing right before you'd forget them, so they stick for exam day.
         </p>
         <Link to="/practice" className="btn-primary inline-flex items-center text-white font-bold rounded-full">
           Keep practicing →
@@ -126,7 +146,7 @@ export default function Practice({ review = false, bookmarks = false }) {
   }
 
   const q = questions[index];
-  const title = review ? 'Review your mistakes' : bookmarks ? 'Your bookmarks' : competencyId ? COMPETENCIES[competencyId] : 'Mixed practice';
+  const title = review ? 'Review your mistakes' : bookmarks ? 'Your bookmarks' : due ? 'Spaced review' : competencyId ? COMPETENCIES[competencyId] : 'Mixed practice';
 
   const toggleBmark = () => {
     const cur = questions[index];

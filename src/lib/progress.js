@@ -9,6 +9,7 @@ const empty = () => ({
   byComp: {}, // { [competencyId]: { answered, correct } }
   byDomain: {}, // { [domain]: { answered, correct } } — for blueprint-weighted readiness
   missed: {}, // { [questionId]: true } — questions to re-drill, cleared once answered right
+  srs: {}, // { [questionId]: { box, due } } — spaced-repetition schedule for durable retention
   bookmarks: {}, // { [questionId]: true } — user-flagged questions to revisit
   sessions: 0,
   streak: { current: 0, longest: 0, lastDay: null },
@@ -46,6 +47,18 @@ const dayKey = (d = new Date()) => {
   return `${x.getFullYear()}-${x.getMonth()}-${x.getDate()}`;
 };
 
+// Spaced repetition (Leitner-style): each answered question sits in a box; a
+// correct answer promotes it (longer interval), a miss resets it to box 1.
+// A question is "due" once its interval since the last answer has elapsed —
+// this resurfaces even questions you got right, to lock them in before the exam.
+const SRS_BOX_DAYS = { 1: 1, 2: 2, 3: 4, 4: 8, 5: 21 };
+const DAY_MS = 86400000;
+
+function scheduleSrs(prev, correct, now) {
+  const box = correct ? Math.min((prev?.box || 0) + 1, 5) : 1;
+  return { box, due: now + SRS_BOX_DAYS[box] * DAY_MS };
+}
+
 function bumpStreak(streak) {
   const s = streak || { current: 0, longest: 0, lastDay: null };
   const today = dayKey();
@@ -61,6 +74,8 @@ export function recordSession(answers) {
   const p = read();
   if (!p.missed) p.missed = {};
   if (!p.byDomain) p.byDomain = {};
+  if (!p.srs) p.srs = {};
+  const now = Date.now();
   for (const a of answers) {
     p.answered += 1;
     if (a.correct) p.correct += 1;
@@ -82,6 +97,8 @@ export function recordSession(answers) {
     if (a.id != null && a.answered !== false) {
       if (a.correct) delete p.missed[a.id];
       else p.missed[a.id] = true;
+      // Update the spaced-repetition schedule for this question.
+      p.srs[String(a.id)] = scheduleSrs(p.srs[String(a.id)], !!a.correct, now);
     }
   }
   p.sessions += 1;
@@ -114,6 +131,17 @@ export function getMissedIds() {
 
 export function missedCount() {
   return Object.keys(read().missed || {}).length;
+}
+
+// Spaced-repetition queue: question ids whose review interval has elapsed.
+export function getDueIds() {
+  const srs = read().srs || {};
+  const now = Date.now();
+  return Object.keys(srs).filter((id) => (srs[id]?.due || 0) <= now);
+}
+
+export function dueCount() {
+  return getDueIds().length;
 }
 
 // Bookmarks — user-flagged questions to revisit. Toggled directly and persist

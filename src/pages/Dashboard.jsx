@@ -9,12 +9,18 @@ import AccessPlanCard from '../components/AccessPlanCard';
 
 const missedCountOf = (prog) => Object.keys(prog.missed || {}).length;
 const bookmarkCountOf = (prog) => Object.keys(prog.bookmarks || {}).length;
+const dueCountOf = (prog) => {
+  const s = prog.srs || {};
+  const now = Date.now();
+  return Object.keys(s).filter((id) => (s[id]?.due || 0) <= now).length;
+};
 
 export default function Dashboard() {
   const { user, premium, isPremium } = useAuth();
   const [prog, setProg] = useState(() => getProgress());
   const missed = missedCountOf(prog);
   const bookmarked = bookmarkCountOf(prog);
+  const due = dueCountOf(prog);
 
   const weakest = useMemo(() => {
     const entries = Object.entries(prog.byComp).filter(([, s]) => s.answered >= 1);
@@ -128,10 +134,18 @@ export default function Dashboard() {
                 Drill your weakest: {COMPETENCIES[weakest]} →
               </Link>
             )}
+            {due > 0 && (
+              <Link
+                to="/review-due"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-orange-500 text-orange-600 dark:text-orange-400 font-bold text-sm px-5 py-3 hover:bg-orange-500/[0.06] transition-colors"
+              >
+                🧠 {due} due for spaced review →
+              </Link>
+            )}
             {missed > 0 && (
               <Link
                 to="/review"
-                className="inline-flex items-center gap-2 rounded-full border-2 border-orange-500 text-orange-600 dark:text-orange-400 font-bold text-sm px-5 py-3 hover:bg-orange-500/[0.06] transition-colors"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-white/15 font-bold text-sm px-5 py-3 hover:border-orange-500 transition-colors"
               >
                 🎯 Review {missed} missed {missed === 1 ? 'question' : 'questions'} →
               </Link>
