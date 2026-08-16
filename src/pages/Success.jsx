@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { signInWithCustomToken } from 'firebase/auth';
 import Seo from '../components/Seo';
+import { auth } from '../lib/firebase';
 import { useAuth } from '../lib/AuthContext';
 import { trackAdsPurchase, trackPurchase } from '../lib/analytics';
 
@@ -15,10 +17,14 @@ const PLAN_BY_DAYS = {
 // so poll until it lands rather than showing a false "no access" state.
 export default function Success() {
   const [params] = useSearchParams();
-  const { refreshPremium, isPremium } = useAuth();
+  const { refreshPremium, isPremium, user } = useAuth();
   const [state, setState] = useState('checking');
+  const started = useRef(false);
 
   useEffect(() => {
+    if (started.current) return; // run the claim + poll sequence once
+    started.current = true;
+
     const sessionId = params.get('session_id');
     let attempts = 0;
     let timer;
@@ -44,9 +50,28 @@ export default function Success() {
       else setState('slow');
     };
 
-    poll();
+    (async () => {
+      // Pay-first: the buyer paid without signing in. Claim the paid session to
+      // sign them in automatically, then poll for the granted access. If the
+      // claim fails, we still poll — the webhook grants access regardless, and
+      // an already-signed-in buyer skips this entirely.
+      if (!user && sessionId && auth) {
+        try {
+          const res = await fetch('/.netlify/functions/claim-session', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ sessionId })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (data.token) await signInWithCustomToken(auth, data.token);
+        } catch { /* fall through to polling */ }
+      }
+      if (!cancelled) poll();
+    })();
+
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [params, refreshPremium]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="max-w-xl mx-auto px-5 py-24 text-center">

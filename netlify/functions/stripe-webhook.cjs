@@ -34,15 +34,35 @@ exports.handler = async (event) => {
 
   if (stripeEvent.type === 'checkout.session.completed') {
     const session = stripeEvent.data.object;
-    const userId = session.metadata && session.metadata.userId;
+    let userId = session.metadata && session.metadata.userId;
     const days = parseInt((session.metadata && session.metadata.days) || '0', 10);
 
-    if (!userId || !days) {
-      console.error('Session missing userId/days metadata:', session.id);
+    if (!days) {
+      console.error('Session missing days metadata:', session.id);
       return { statusCode: 200, body: 'ignored' }; // 200 so Stripe stops retrying
     }
 
+    const email =
+      (session.customer_details && session.customer_details.email) ||
+      session.customer_email ||
+      null;
+
     try {
+      // Pay-first: no account yet. Create or link a Firebase user from the
+      // email Stripe collected, so we have a uid to grant access to. The
+      // signed-in flow (userId present) is unchanged.
+      if (!userId) {
+        if (!email) {
+          console.error('No userId and no email on session:', session.id);
+          return { statusCode: 200, body: 'ignored' };
+        }
+        try {
+          userId = (await admin.auth().getUserByEmail(email)).uid;
+        } catch {
+          userId = (await admin.auth().createUser({ email })).uid;
+        }
+      }
+
       const userRef = db.collection('users').doc(userId);
       const snap = await userRef.get();
       const existing = snap.exists ? snap.data() : {};
@@ -59,7 +79,7 @@ exports.handler = async (event) => {
         {
           isPremium: true,
           expiryDate,
-          email: session.customer_email || existing.email || null,
+          email: email || existing.email || null,
           lastPurchase: {
             sessionId: session.id,
             amountTotal: session.amount_total,

@@ -18,8 +18,10 @@ exports.handler = async (event) => {
   try {
     const { priceId, userId, userEmail } = JSON.parse(event.body || '{}');
 
-    if (!priceId || !userId) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Missing priceId or userId' }) };
+    // userId is optional: signed-in buyers pass it; pay-first buyers don't have
+    // an account yet, so the webhook creates/links one from the Stripe email.
+    if (!priceId) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing priceId' }) };
     }
 
     const days = PRICE_DAYS[priceId];
@@ -29,17 +31,21 @@ exports.handler = async (event) => {
 
     const siteUrl = process.env.SITE_URL || 'https://pccmastery.com';
 
+    // Metadata is what the webhook reads to grant access. Include userId only
+    // when present; otherwise the webhook falls back to the collected email.
+    const metadata = { days: String(days), priceId };
+    if (userId) metadata.userId = userId;
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
+      // Prefill for signed-in buyers; leave unset for pay-first so Stripe
+      // collects the email (which the webhook then uses to provision access).
       customer_email: userEmail || undefined,
       success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/pricing?canceled=true`,
-      // Metadata is what the webhook reads to grant access.
-      metadata: { userId, days: String(days), priceId },
-      payment_intent_data: {
-        metadata: { userId, days: String(days) }
-      }
+      metadata,
+      payment_intent_data: { metadata }
     });
 
     return {

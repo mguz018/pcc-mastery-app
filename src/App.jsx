@@ -52,7 +52,9 @@ export default function App() {
 
             <Route path="dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
-            <Route path="success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
+            {/* Not protected: pay-first buyers arrive here without a session and
+                are auto-signed-in via their paid Stripe session. */}
+            <Route path="success" element={<Success />} />
 
             <Route path="*" element={<NotFound />} />
           </Route>

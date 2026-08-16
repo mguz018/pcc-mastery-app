@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Seo from '../components/Seo';
 import { useAuth } from '../lib/AuthContext';
 import { trackBeginCheckout, trackViewPricing } from '../lib/analytics';
@@ -30,12 +30,15 @@ export default function Pricing() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const { user, isPremium } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => { trackViewPricing(); }, []);
 
-  // The actual Stripe hand-off. Assumes a signed-in user.
-  const startCheckout = async (plan) => {
+  // Start Stripe checkout. Signed-in buyers pass their uid/email so access is
+  // granted to their account. Pay-first buyers check out with no account —
+  // Stripe collects their email, the webhook provisions an account, and the
+  // success page signs them in automatically. No sign-up before paying.
+  const checkout = async () => {
+    const plan = PLANS[selected];
     setError('');
     setBusy(true);
     trackBeginCheckout(plan.label, plan.price);
@@ -44,7 +47,10 @@ export default function Pricing() {
       const res = await fetch('/.netlify/functions/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId: plan.priceId, userId: user.uid, userEmail: user.email })
+        body: JSON.stringify({
+          priceId: plan.priceId,
+          ...(user ? { userId: user.uid, userEmail: user.email } : {})
+        })
       });
 
       // A non-JSON body here means the function didn't deploy — surface that
@@ -63,31 +69,6 @@ export default function Pricing() {
       setBusy(false);
     }
   };
-
-  const checkout = () => {
-    setError('');
-    if (!user) {
-      // Remember the chosen plan so we can resume checkout the moment they
-      // finish signing up — no dead-end bounce back to the pricing page.
-      try { sessionStorage.setItem('pcc_checkout_plan', selected); } catch { /* private mode */ }
-      navigate('/login', { state: { from: '/pricing' } });
-      return;
-    }
-    startCheckout(PLANS[selected]);
-  };
-
-  // Resume checkout automatically after a buy-click that routed through sign-up.
-  useEffect(() => {
-    if (!user) return;
-    let pending;
-    try { pending = sessionStorage.getItem('pcc_checkout_plan'); } catch { /* private mode */ }
-    if (pending && PLANS[pending]) {
-      try { sessionStorage.removeItem('pcc_checkout_plan'); } catch { /* private mode */ }
-      setSelected(pending);
-      startCheckout(PLANS[pending]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
 
   if (isPremium) {
     return (
