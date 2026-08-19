@@ -25,38 +25,60 @@ function send(name, params = {}) {
   if (typeof window.gtag === 'function') window.gtag('event', name, params);
 }
 
+// --- Google Ads conversion actions ------------------------------------------
+// Each constant is the account's conversion ID plus one action's label. Purchase
+// was the only measured action in the account, and it fires far too rarely to
+// bid on — sign-up and begin-checkout are the upstream steps with enough monthly
+// volume for smart bidding to learn from at all.
+//
+// Create each in Google Ads (Goals > Conversions > Create conversion action >
+// Website > "Add manually using code"), then paste its label below. Note that
+// only PRIMARY actions influence bidding — Secondary ones are observation-only.
+const ADS_PURCHASE = 'AW-17793251865/E10uCJHChM8bEJn0vaRC'; // Primary
+const ADS_BEGIN_CHECKOUT = 'AW-17793251865/5QE8CMaqtOQcEJn0vaRC'; // Primary
+const ADS_SIGN_UP = 'AW-17793251865/2wo-CMmqtOQcEJn0vaRC';        // observation only
+
+// Fires one Ads conversion action. An unset label no-ops, so an action that
+// hasn't been created yet never sends a malformed send_to. Passing `email` opts
+// the hit into Enhanced Conversions: gtag hashes it on-device (SHA-256) before
+// it ever leaves the browser, then Google matches it to the ad click.
+function sendAdsConversion(label, { email, ...params } = {}) {
+  if (!label) return;
+  if (import.meta.env.DEV) { console.debug('[analytics] ads conversion', label, params); return; }
+  if (typeof window.gtag !== 'function') return;
+  if (email) window.gtag('set', 'user_data', { email });
+  window.gtag('event', 'conversion', { send_to: label, ...params });
+}
+
 // Real routes mean real pageviews — this is what was impossible before.
 export const trackPageView = (path, title) =>
   send('page_view', { page_path: path, page_title: title, page_location: window.location.href });
 
-export const trackSignUp = (method) => send('sign_up', { method });
+export const trackSignUp = (method, email) => {
+  send('sign_up', { method });
+  sendAdsConversion(ADS_SIGN_UP, { email });
+};
 export const trackLogin = (method) => send('login', { method });
 
 // Funnel: view pricing -> begin checkout -> purchase
 export const trackViewPricing = () => send('view_item_list', { item_list_name: 'plans' });
-export const trackBeginCheckout = (plan, value) =>
+export const trackBeginCheckout = (plan, value, email) => {
   send('begin_checkout', { currency: 'USD', value, items: [{ item_name: plan }] });
+  sendAdsConversion(ADS_BEGIN_CHECKOUT, { value, currency: 'USD', email });
+};
 export const trackPurchase = (sessionId, value, plan) =>
   send('purchase', { transaction_id: sessionId, currency: 'USD', value, items: [{ item_name: plan }] });
 
-// Fires the specific Google Ads "Purchase" conversion action so PerfMax can
-// optimize toward sales (and their real dollar value). send_to is the account's
-// conversion ID + label; transaction_id lets Google de-duplicate repeat loads.
-const ADS_PURCHASE = 'AW-17793251865/E10uCJHChM8bEJn0vaRC';
-export const trackAdsPurchase = (value, transactionId, email) => {
-  if (import.meta.env.DEV) { console.debug('[analytics] ads conversion', value); return; }
-  if (typeof window.gtag === 'function') {
-    // Enhanced Conversions: gtag hashes this email on-device (SHA-256) before it
-    // ever leaves the browser, then Google matches it to the ad click.
-    if (email) window.gtag('set', 'user_data', { email });
-    window.gtag('event', 'conversion', {
-      send_to: ADS_PURCHASE,
-      value,
-      currency: 'USD',
-      transaction_id: transactionId || ''
-    });
-  }
-};
+// Fires the Google Ads "Purchase" conversion action so bidding can optimize
+// toward sales (and their real dollar value). transaction_id lets Google
+// de-duplicate repeat loads of /success.
+export const trackAdsPurchase = (value, transactionId, email) =>
+  sendAdsConversion(ADS_PURCHASE, {
+    value,
+    currency: 'USD',
+    transaction_id: transactionId || '',
+    email
+  });
 
 // Engagement: tells you whether free questions actually convert.
 export const trackQuestionAnswered = (id, correct) =>

@@ -41,7 +41,7 @@ export default function Pricing() {
     const plan = PLANS[selected];
     setError('');
     setBusy(true);
-    trackBeginCheckout(plan.label, plan.price);
+    trackBeginCheckout(plan.label, plan.price, user?.email);
 
     try {
       const res = await fetch('/.netlify/functions/create-checkout', {

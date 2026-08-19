@@ -103,7 +103,7 @@ export function AuthProvider({ children }) {
   const register = async (email, password) => {
     requireAuth();
     const cred = await createUserWithEmailAndPassword(auth, email, password);
-    trackSignUp('password');
+    trackSignUp('password', email);
     return cred.user;
   };
 
