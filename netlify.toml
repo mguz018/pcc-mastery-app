@@ -7,6 +7,20 @@
   node_bundler = "esbuild"
   external_node_modules = ["firebase-admin"]
 
+# Static pages for the Top Bins Soccer iOS app. Apple requires a reachable
+# support URL and privacy policy URL, and both are registered with these exact
+# paths. They sit above the SPA fallback because Netlify uses the first matching
+# rule - underneath it, both would serve index.html.
+[[redirects]]
+  from = "/topbins-support"
+  to = "/topbins-support.html"
+  status = 200
+
+[[redirects]]
+  from = "/topbins-privacy"
+  to = "/topbins-privacy.html"
+  status = 200
+
 # SPA fallback: real routes are handled by react-router client-side.
 # Netlify serves /.netlify/functions/* natively (ahead of this catch-all), so
 # functions — including the raw-body Stripe webhook — are not affected by it.
