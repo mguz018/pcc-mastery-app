@@ -48,6 +48,12 @@ export default function Landing() {
             </Link>
           </div>
 
+          <p className="reveal mt-5 text-sm" style={{ animationDelay: '.4s' }}>
+            <Link to="/quiz" className="text-orange-500 font-semibold hover:underline">
+              Not sure where you stand? Take the free 2-min readiness quiz →
+            </Link>
+          </p>
+
           <dl className="reveal mt-16 grid grid-cols-3 gap-4 max-w-lg mx-auto" style={{ animationDelay: '.45s' }}>
             {[['760', 'Questions'], ['8', 'Competencies'], ['100%', 'Exam format']].map(([n, l]) => (
               <div key={l}>

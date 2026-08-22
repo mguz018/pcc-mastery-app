@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://pccmastery.com/</loc><priority>1.0</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://pccmastery.com/pricing</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://pccmastery.com/quiz</loc><priority>0.9</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://pccmastery.com/guides</loc><priority>0.8</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://pccmastery.com/guides/icf-pcc-exam-format</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://pccmastery.com/guides/how-to-prepare-icf-pcc-exam</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>

@@ -72,6 +72,7 @@ function Footer() {
           </p>
         </div>
         <nav className="flex flex-col gap-2" aria-label="Footer">
+          <Link to="/quiz" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">Free Readiness Quiz</Link>
           <Link to="/pricing" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">Pricing</Link>
           <Link to="/guides" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">Exam Guides</Link>
           <Link to="/prep-guide" className="text-slate-600 dark:text-slate-300 hover:text-orange-500">Prep Guide</Link>

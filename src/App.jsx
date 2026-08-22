@@ -13,6 +13,7 @@ const ExamSimulator = lazy(() => import('./pages/ExamSimulator'));
 const Diagnostic = lazy(() => import('./pages/Diagnostic'));
 const Admin = lazy(() => import('./pages/Admin'));
 const Pricing = lazy(() => import('./pages/Pricing'));
+const Quiz = lazy(() => import('./pages/Quiz'));
 const Results = lazy(() => import('./pages/Results'));
 const Success = lazy(() => import('./pages/Success'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -34,6 +35,7 @@ export default function App() {
           <Route element={<Layout theme={theme} />}>
             <Route index element={<Landing />} />
             <Route path="pricing" element={<Pricing />} />
+            <Route path="quiz" element={<Quiz />} />
             <Route path="about" element={<About />} />
             <Route path="prep-guide" element={<PrepGuide />} />
             <Route path="guides" element={<Guides />} />
